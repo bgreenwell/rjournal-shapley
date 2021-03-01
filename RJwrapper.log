@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  1 MAR 2021 16:30
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  1 MAR 2021 16:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1493,8 +1493,21 @@ LaTeX Font Info:    Font shape `T1/ppl/bx/n' in size <12> not available
 LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
 (Font)              using `T1/zi4/m/n' instead on input line 609.
 
+
+Underfull \hbox (badness 10000) in paragraph at lines 609--610
+
+ []
+
+LaTeX Font Info:    Font shape `T1/zi4/m/it' will be
+(Font)              scaled to size 9.18004pt on input line 620.
+Package microtype Info: Character `textendash ' is missing
+(microtype)             in font `T1/zi4/m/it/9'.
+(microtype)             Ignoring protrusion settings for this character.
+Package microtype Info: Character `textemdash ' is missing
+(microtype)             in font `T1/zi4/m/it/9'.
+(microtype)             Ignoring protrusion settings for this character.
 )
-Underfull \hbox (badness 10000) in paragraph at lines 609--32
+Underfull \hbox (badness 10000) in paragraph at lines 620--32
 
  []
 
@@ -1517,13 +1530,13 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 34.
  ) 
 Here is how much of TeX's memory you used:
- 22532 strings out of 492995
- 402335 string characters out of 6132704
- 501488 words of memory out of 5000000
- 25336 multiletter control sequences out of 15000+600000
+ 22534 strings out of 492995
+ 402376 string characters out of 6132704
+ 502488 words of memory out of 5000000
+ 25338 multiletter control sequences out of 15000+600000
  74858 words of font info for 272 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 62i,16n,94p,425b,696s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 62i,16n,94p,425b,695s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): name{Hfootnote.1} has been referenced but does not exi
 st, replaced by a fixed one
 
@@ -1544,10 +1557,10 @@ texmf-dist/fonts/type1/urw/palatino/uplbi8a.pfb></usr/local/texlive/2017/texmf-
 dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2017/texmf-dist/fo
 nts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2017/texmf-dist/fonts/typ
 e1/urw/palatino/uplri8a.pfb>
-Output written on RJwrapper.pdf (8 pages, 216318 bytes).
+Output written on RJwrapper.pdf (8 pages, 216224 bytes).
 PDF statistics:
- 292 PDF objects out of 1000 (max. 8388607)
- 259 compressed objects within 3 object streams
+ 294 PDF objects out of 1000 (max. 8388607)
+ 261 compressed objects within 3 object streams
  62 named destinations out of 1000 (max. 500000)
  52839 words of extra memory for PDF output out of 61914 (max. 10000000)
 
