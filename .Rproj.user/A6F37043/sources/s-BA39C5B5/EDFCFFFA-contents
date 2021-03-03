@@ -46,6 +46,7 @@ knitr::opts_chunk$set(
 
 * ~~Flesh out outline/section headers.~~
 * Finish bar tab example (or switch to something better).
+* Discuss SHAP as a unification of Shapley, LIME, etc.
 * Find a good place to talk about "true to the model" versus "true to the data": https://arxiv.org/pdf/2006.16234.pdf (I think this is important for motivating the SampleSHAP approximation, which relies on randomly permuting instance values.)
 * Fill out KernalSHAP section.
 * Find motivating example for **iml** package; maybe credit card default risk?
