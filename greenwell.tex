@@ -396,7 +396,7 @@ fit <- glm(Survived ~ ., data = titanic, family = binomial)
 
 Suppose we wanted to explain the predicted survival probability for a
 new passenger named Jack
-Dawson\footnote{Insipiration for this example was taken from...}:
+Dawson\footnote{Insipiration for this example was taken from \url{https://modeloriented.github.io/iBreakDown/articles/vignette_iBreakDown_titanic.html.}}:
 
 \begin{Schunk}
 \begin{Sinput}
@@ -406,7 +406,7 @@ jack.dawson <- data.frame(
   Age = 20,
   SibSp = 0,
   Parch = 0,
-  Fare = 15,  # lower end of third-class ticket prices
+  Fare = 15,  # lower end of third-class ticket prices; technically, Jack won his ticket
   Embarked = factor("S", levels = c("", "C", "Q", "S"))
 )
 \end{Sinput}
