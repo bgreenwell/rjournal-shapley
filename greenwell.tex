@@ -162,6 +162,14 @@ good approximations to each \(\phi_i\left(x\right)\). In practice, this
 depends on the variance of each feature in the observed training data,
 but typically \(R >= 50--100\) will suffice (\textbf{Need reference}).
 
+SampleSHAP can be computationally prohibitive if you need to explain
+large data sets. Fortunately, you often only need to explain a handful
+of predictions, for example the most extreme predictions. However,
+generating explanations for the entire training set, or a large enough
+sample thereof, can be useful for generating aggregated model summaries,
+like Shapley-based variable importance plots \textbf{FIXME: Add
+reference}.
+
 \hypertarget{special-cases}{%
 \subsection{Special cases}\label{special-cases}}
 
@@ -387,11 +395,12 @@ fit <- glm(Survived ~ ., data = titanic, family = binomial)
 \end{Schunk}
 
 Suppose we wanted to explain the predicted survival probability for a
-new passenger named Jack:
+new passenger named Jack
+Dawson\footnote{Insipiration for this example was taken from...}:
 
 \begin{Schunk}
 \begin{Sinput}
-jack <- data.frame(
+jack.dawson <- data.frame(
   Pclass = 3,
   Sex = factor("male", levels = c("female", "male")),
   Age = 20,
@@ -408,7 +417,7 @@ is
 
 \begin{Schunk}
 \begin{Sinput}
-predict(fit, newdata = jack)
+predict(fit, newdata = jack.dawson)
 \end{Sinput}
 \begin{Soutput}
 #>         1 
@@ -452,25 +461,37 @@ explanations for Jack's prediction using 100 Monte Carlo repetitions.
 \begin{Sinput}
 # Compute explanations
 set.seed(1039)  # for reproducibility
-ex1 <- iBreakDown::shap(explainer, B = 100, new_observation = jack)
-ex2 <- iml::Shapley$new(predictor, x.interest = jack, sample.size = 100)
+ex1 <- iBreakDown::shap(explainer, B = 100, new_observation = jack.dawson)
+ex2 <- iml::Shapley$new(predictor, x.interest = jack.dawson, sample.size = 100)
 ex3 <- fastshap::explain(fit, X = X, pred_wrapper = pfun, nsim = 100,
-                         newdata = jack)
+                         newdata = jack.dawson)
+\end{Sinput}
+\end{Schunk}
 
-# Plot results
-library(ggplot2)  # for `autoplot()` function
+Finally, we plot the resulting explanations. Note that both
+\pkg{fastshap} and \pkg{iBreakDown} plot the feature contributions in
+the original order, whereas \pkg{iml} plots them in descending order.
+
+\begin{Schunk}
+\begin{Sinput}
+library(ggplot2)
+
+# Set ggplot2 theme
+theme_set(theme_bw())
+
+# Plot results (see Figure XYZ)
 p3 <- plot(ex1) + ggtitle("iBreakDown")
 p2 <- plot(ex2) + ggtitle("iml")
 p1 <- autoplot(ex3, type = "contribution") + ggtitle("fastshap")
-fastshap::grid.arrange(p1, p2, p3, nrow = 1)
+gridExtra::grid.arrange(p1, p2, p3, nrow = 1)
 \end{Sinput}
 \begin{figure}[!htb]
 
-{\centering \includegraphics[width=1\linewidth]{greenwell_files/figure-latex/titanic-jack-explanations-1} 
+{\centering \includegraphics[width=1\linewidth]{greenwell_files/figure-latex/titanic-jack-explanations-plot-1} 
 
 }
 
-\caption[TBD]{TBD.}\label{fig:titanic-jack-explanations}
+\caption[TBD]{TBD.}\label{fig:titanic-jack-explanations-plot}
 \end{figure}
 \end{Schunk}
 
@@ -494,34 +515,38 @@ set.seed(904)
 for (i in seq_along(nsims)) {
   message("nsim = ", nsims[i], "...")
   times1[i] <- system.time({
-    iBreakDown::shap(explainer, B = nsims[i], new_observation = jack)
+    iBreakDown::shap(explainer, B = nsims[i], new_observation = jack.dawson)
   })["elapsed"]
   times2[i] <- system.time({
-    iml::Shapley$new(predictor, x.interest = jack, sample.size = nsims[i])
+    iml::Shapley$new(predictor, x.interest = jack.dawson, 
+                     sample.size = nsims[i])
   })["elapsed"]
   times3[i] <- system.time({
-    fastshap::explain(fit, X = X, newdata = jack, pred_wrapper = pfun, 
+    fastshap::explain(fit, X = X, newdata = jack.dawson, pred_wrapper = pfun, 
                       nsim = nsims[i])
   })["elapsed"]
 }
-pal <- palette.colors(3, palette = "Okabe-Ito")  # colorblind friendly palette 
+palette("Okabe-Ito")  # colorblind friendly palette 
 plot(nsims, times1, type = "b", xlab = "Number of Monte Carlo repetitions",
-     ylab = "Time (in seconds)", las = 1, pch = 19, col = pal[1L],
+     ylab = "Time (in seconds)", las = 1, pch = 19, 
      xlim = c(0, max(nsims)), ylim = c(0, max(times1, times2, times3)))
-lines(nsims, times2, type = "b", pch = 19, col = pal[2L],)
-lines(nsims, times3, type = "b", pch = 19, col = pal[3L],)
+lines(nsims, times2, type = "b", pch = 19, col = 2)
+lines(nsims, times3, type = "b", pch = 19, col = 3)
 legend("topleft",
        legend = c("iBreakDown", "iml", "fastshap"),
-       lty = 1, pch = 19, col = pal, inset = 0.02)
+       lty = 1, pch = 19, col = 1:3, inset = 0.02)
 \end{Sinput}
 \begin{figure}[!htb]
 
-{\centering \includegraphics[width=0.8\linewidth]{greenwell_files/figure-latex/titanic-benchmark-1} 
+{\centering \includegraphics[width=1\linewidth]{greenwell_files/figure-latex/titanic-benchmark-1} 
 
 }
 
 \caption[Quick benchmark between three different implementations of SampleSHAP for explaining Jack's unfortunate prediction]{Quick benchmark between three different implementations of SampleSHAP for explaining Jack's unfortunate prediction.}\label{fig:titanic-benchmark}
 \end{figure}
+\begin{Sinput}
+palette("default")  # switch back to R's default color palette
+\end{Sinput}
 \end{Schunk}
 
 The message to be taken from
@@ -534,7 +559,7 @@ contributions for this example.
 
 \begin{Schunk}
 \begin{Sinput}
-fastshap::explain(fit, newdata = jack, exact = TRUE)  # ExactSHAP
+fastshap::explain(fit, newdata = jack.dawson, exact = TRUE)  # ExactSHAP
 \end{Sinput}
 \begin{Soutput}
 #> # A tibble: 1 x 7
@@ -544,7 +569,7 @@ fastshap::explain(fit, newdata = jack, exact = TRUE)  # ExactSHAP
 \end{Soutput}
 \begin{Sinput}
 fastshap::explain(fit, X = X, pred_wrapper = pfun, nsim = 10000,
-                  newdata = jack)  # SampleSHAP
+                  newdata = jack.dawson)  # SampleSHAP
 \end{Sinput}
 \begin{Soutput}
 #> # A tibble: 1 x 7
@@ -553,7 +578,7 @@ fastshap::explain(fit, X = X, pred_wrapper = pfun, nsim = 10000,
 #> 1 -0.929 -0.977 0.422 0.185 0.0257 -0.0290  -0.0865
 \end{Soutput}
 \begin{Sinput}
-predict(fit, newdata = jack, type = "terms")  # ExactSHAP (base R)
+predict(fit, newdata = jack.dawson, type = "terms")  # ExactSHAP (base R)
 \end{Sinput}
 \begin{Soutput}
 #>       Pclass        Sex       Age     SibSp      Parch       Fare    Embarked
@@ -563,6 +588,11 @@ predict(fit, newdata = jack, type = "terms")  # ExactSHAP (base R)
 \end{Soutput}
 \end{Schunk}
 
+\textbf{FIXME:} Need a plot of fastshap explaining 1, 10, and 100 rows
+for various values of \code{nsim} to show that the increase in
+computation is not additive (i.e., it won't take twice as long to
+epxlain two rows compared to just one, etc.)
+
 \hypertarget{example-ames-housing-data}{%
 \subsection{Example: Ames housing
 data}\label{example-ames-housing-data}}
@@ -571,6 +601,135 @@ Use \texttt{fastshap::explain()} to explain predictions from a LightGBM
 model on the Ames housing data using both exact and approximate
 explanations (\textbf{Note:} there's a current PR that will give exact
 functionality for LightGBM models, which is now on CRAN).
+
+To start, we'll load the Ames housing data from the
+\CRANpkg{AmesHousing} package \citep{R-AmesHousing} and fit a random
+forest using the highly efficient \CRANpkg{ranger} \citep{R-ranger}
+package.
+
+\begin{Schunk}
+\begin{Sinput}
+library(ranger)
+
+# Set ggplot2 theme
+theme_set(theme_bw())
+
+# Load Ames housing data
+ames <- as.data.frame(AmesHousing::make_ames())
+
+# Fit a (default) random forest
+set.seed(1644)  # for reproducibility
+(rfo <- ranger(Sale_Price ~ ., data = ames))
+\end{Sinput}
+\begin{Soutput}
+#> Ranger result
+#> 
+#> Call:
+#>  ranger(Sale_Price ~ ., data = ames) 
+#> 
+#> Type:                             Regression 
+#> Number of trees:                  500 
+#> Sample size:                      2930 
+#> Number of independent variables:  80 
+#> Mtry:                             8 
+#> Target node size:                 5 
+#> Variable importance mode:         none 
+#> Splitrule:                        variance 
+#> OOB prediction error (MSE):       623733174 
+#> R squared (OOB):                  0.902265
+\end{Soutput}
+\end{Schunk}
+
+Next we'll compute approximate Shapley values for the entire
+\(2930 \times 80\) training set; to speed up computation, we'll turn on
+parallel processing. (Note that this took about one hour on a 3.1 GHz
+Dual-Core Intel Core i5 machine with 8 GB of RAM.)
+
+\begin{Schunk}
+\begin{Sinput}
+library(doParallel)
+library(fastshap)
+
+# Set up parallel backend
+cl <- if (.Platform$OS.type == "unix") 8 else makeCluster(8)
+registerDoParallel(cl)
+
+# Create data frame of only features
+X <- subset(ames, select = -Sale_Price)
+
+# Prediction wrapper
+pfun <- function(object, newdata) {
+  predict(object, data = newdata)$predictions
+}
+
+# Explain entire data set (useful for aggregated model summaries)
+ex.all <- explain(rfo, X = X, nsim = 100, pred_wrapper = pfun, adjust = TRUE,
+                  .parallel = TRUE)
+head(ex)  # peak at results
+\end{Sinput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Soutput}
+#> # A tibble: 6 x 80
+#>   MS_SubClass MS_Zoning Lot_Frontage Lot_Area Street Alley Lot_Shape
+#>         <dbl>     <dbl>        <dbl>    <dbl>  <dbl> <dbl>     <dbl>
+#> 1      284.       562.        2139.     6602.  0     -1.57      642.
+#> 2     -308.        73.9        331.      346.  0      9.29     -282.
+#> 3       -2.06     668.         977.     3331.  0     11.8       402.
+#> 4      271.       729.        1603.     1313. -0.893 -4.70     -349.
+#> 5      827.       437.         -67.2    2216.  0     -2.13      420.
+#> 6      745.       812.          98.5     106.  0      4.41      369.
+#> # ... with 73 more variables: Land_Contour <dbl>, Utilities <dbl>,
+#> #   Lot_Config <dbl>, Land_Slope <dbl>, Neighborhood <dbl>, Condition_1 <dbl>,
+#> #   Condition_2 <dbl>, Bldg_Type <dbl>, House_Style <dbl>, Overall_Qual <dbl>,
+#> #   Overall_Cond <dbl>, Year_Built <dbl>, Year_Remod_Add <dbl>,
+#> #   Roof_Style <dbl>, Roof_Matl <dbl>, Exterior_1st <dbl>, Exterior_2nd <dbl>,
+#> #   Mas_Vnr_Type <dbl>, Mas_Vnr_Area <dbl>, Exter_Qual <dbl>, Exter_Cond <dbl>,
+#> #   Foundation <dbl>, Bsmt_Qual <dbl>, Bsmt_Cond <dbl>, Bsmt_Exposure <dbl>,
+#> #   BsmtFin_Type_1 <dbl>, BsmtFin_SF_1 <dbl>, BsmtFin_Type_2 <dbl>,
+#> #   BsmtFin_SF_2 <dbl>, Bsmt_Unf_SF <dbl>, Total_Bsmt_SF <dbl>, Heating <dbl>,
+#> #   Heating_QC <dbl>, Central_Air <dbl>, Electrical <dbl>, First_Flr_SF <dbl>,
+#> #   Second_Flr_SF <dbl>, Low_Qual_Fin_SF <dbl>, Gr_Liv_Area <dbl>,
+#> #   Bsmt_Full_Bath <dbl>, Bsmt_Half_Bath <dbl>, Full_Bath <dbl>,
+#> #   Half_Bath <dbl>, Bedroom_AbvGr <dbl>, Kitchen_AbvGr <dbl>,
+#> #   Kitchen_Qual <dbl>, TotRms_AbvGrd <dbl>, Functional <dbl>,
+#> #   Fireplaces <dbl>, Fireplace_Qu <dbl>, Garage_Type <dbl>,
+#> #   Garage_Finish <dbl>, Garage_Cars <dbl>, Garage_Area <dbl>,
+#> #   Garage_Qual <dbl>, Garage_Cond <dbl>, Paved_Drive <dbl>,
+#> #   Wood_Deck_SF <dbl>, Open_Porch_SF <dbl>, Enclosed_Porch <dbl>,
+#> #   Three_season_porch <dbl>, Screen_Porch <dbl>, Pool_Area <dbl>,
+#> #   Pool_QC <dbl>, Fence <dbl>, Misc_Feature <dbl>, Misc_Val <dbl>,
+#> #   Mo_Sold <dbl>, Year_Sold <dbl>, Sale_Type <dbl>, Sale_Condition <dbl>,
+#> #   Longitude <dbl>, Latitude <dbl>
+\end{Soutput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
+library(ggplot2)
+
+# Set ggplot2 theme
+theme_set(theme_bw())
+
+# Shapley summary plots (see Figure XYZ)
+p1 <- autoplot(ex.all, num_features = 20)
+p2 <- autoplot(ex.all, type = "dependence", feature = "Gr_Liv_Area", X = X,
+               color_by = "Central_Air", alpha = 0.3) +
+  scale_color_viridis_d(direction = -1) +  # cool colors
+  theme(legend.position = c(0.7, 0.2), 
+        legend.key = element_rect(colour = "transparent", fill = "white"))
+gridExtra::grid.arrange(p1, p2, nrow = 1)
+\end{Sinput}
+\begin{figure}[!htb]
+
+{\centering \includegraphics[width=1\linewidth]{greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1} 
+
+}
+
+\caption[TBD]{TBD.}\label{fig:ex-ames-fastshap-autoplot}
+\end{figure}
+\end{Schunk}
 
 \hypertarget{example-default-of-credit-card-clients}{%
 \subsection{Example: default of credit card

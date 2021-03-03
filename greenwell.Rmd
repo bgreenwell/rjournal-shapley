@@ -34,7 +34,7 @@ knitr::opts_chunk$set(
   cache = TRUE,
   fig.width = 6,
   fig.asp = 0.618,
-  out.width = "80%",
+  out.width = "100%",
   fig.align = "center",
   fig.pos = "!htb",
   message = FALSE,
@@ -154,6 +154,8 @@ A single estimate of the contribution of $x_i$ to $f\left(x\right)$ is nothing t
 If there are $p$ features and $m$ instanced to be explained, this requires $2 \times R \times p \times m$ predictions (or calls to a scoring function). In practice, this can be quite computationally demanding, especially since $R$ needs to be large enough to produce good approximations to each $\phi_i\left(x\right)$. In practice, this depends on the variance of each feature in the observed training data, but typically $R >= 50--100$ will suffice (**Need reference**).
 
 
+SampleSHAP can be computationally prohibitive if you need to explain large data sets. Fortunately, you often only need to explain a handful of predictions, for example the most extreme predictions. However, generating explanations for the entire training set, or a large enough sample thereof, can be useful for generating aggregated model summaries, like Shapley-based variable importance plots **FIXME: Add reference**.
+
 ## Special cases
 
 The following sections discuss two special cases where exact Shapley explanations can be computed efficiently: additive linear models, and shallow trees and tree ensembles.
@@ -264,9 +266,9 @@ Next, we’ll use the stats::glm() to fit a logistic regression model with only 
 ```{r titanic-glm}
 fit <- glm(Survived ~ ., data = titanic, family = binomial)
 ```
-Suppose we wanted to explain the predicted survival probability for a new passenger named Jack:
+Suppose we wanted to explain the predicted survival probability for a new passenger named Jack Dawson\footnote{Insipiration for this example was taken from...}:
 ```{r titanic-jack}
-jack <- data.frame(
+jack.dawson <- data.frame(
   Pclass = 3,
   Sex = factor("male", levels = c("female", "male")),
   Age = 20,
@@ -278,7 +280,7 @@ jack <- data.frame(
 ```
 Our logistic regression model predicts that Jack’s log-odds of survival is
 ```{r titanic-jack-predict}
-predict(fit, newdata = jack)
+predict(fit, newdata = jack.dawson)
 ```
 Yikes, that’s equivalent to estimated 13.64% predicted probability of survival! With a baseline (i.e., average) survival rate of 40.62%, can we explain why the model predicts Jack to be much lower? Enter...Shapley values.
 
@@ -299,20 +301,27 @@ predictor <- iml::Predictor$new(fit, data = titanic, y = "Survived",
                                 predict.fun = pfun)
 ```
 Next, we call each implementation’s Shapley-related function to compute explanations for Jack’s prediction using 100 Monte Carlo repetitions.
-```{r titanic-jack-explanations, fig.width=9, fig.height=3, out.width="100%", fig.cap="TBD."}
+```{r titanic-jack-explanations}
 # Compute explanations
 set.seed(1039)  # for reproducibility
-ex1 <- iBreakDown::shap(explainer, B = 100, new_observation = jack)
-ex2 <- iml::Shapley$new(predictor, x.interest = jack, sample.size = 100)
+ex1 <- iBreakDown::shap(explainer, B = 100, new_observation = jack.dawson)
+ex2 <- iml::Shapley$new(predictor, x.interest = jack.dawson, sample.size = 100)
 ex3 <- fastshap::explain(fit, X = X, pred_wrapper = pfun, nsim = 100,
-                         newdata = jack)
+                         newdata = jack.dawson)
+```
 
-# Plot results
-library(ggplot2)  # for `autoplot()` function
+Finally, we plot the resulting explanations. Note that both \pkg{fastshap} and \pkg{iBreakDown} plot the feature contributions in the original order, whereas \pkg{iml} plots them in descending order.
+```{r titanic-jack-explanations-plot, fig.width=9, fig.height=3, out.width="100%", fig.cap="TBD."}
+library(ggplot2)
+
+# Set ggplot2 theme
+theme_set(theme_bw())
+
+# Plot results (see Figure XYZ)
 p3 <- plot(ex1) + ggtitle("iBreakDown")
 p2 <- plot(ex2) + ggtitle("iml")
 p1 <- autoplot(ex3, type = "contribution") + ggtitle("fastshap")
-fastshap::grid.arrange(p1, p2, p3, nrow = 1)
+gridExtra::grid.arrange(p1, p2, p3, nrow = 1)
 ```
 
 Each package comes loaded with it’s own bells and whistles (e.g., \pkg{iml} and \pkg{iBreakDown} have particularly fantastic visualizations). The main selling point of \pkg{fastshap} is speed! For example, all three packages (in fact, all general and practical implementations of Shapley values) use Algorithm~\ref{alg:SampleSHAP} which requires a large number of Monte Carlo repetitions to achieve accurate results. Below is a simple benchmark looking at the estimated time (in seconds) to explain Jack’s prediction as a function of the number of Monte Carlo repetitions for each implementation. (Note that this comparison does not make use of \pkg{fastshap}'s feature-wise parallelization.)
@@ -324,41 +333,108 @@ set.seed(904)
 for (i in seq_along(nsims)) {
   message("nsim = ", nsims[i], "...")
   times1[i] <- system.time({
-    iBreakDown::shap(explainer, B = nsims[i], new_observation = jack)
+    iBreakDown::shap(explainer, B = nsims[i], new_observation = jack.dawson)
   })["elapsed"]
   times2[i] <- system.time({
-    iml::Shapley$new(predictor, x.interest = jack, sample.size = nsims[i])
+    iml::Shapley$new(predictor, x.interest = jack.dawson, 
+                     sample.size = nsims[i])
   })["elapsed"]
   times3[i] <- system.time({
-    fastshap::explain(fit, X = X, newdata = jack, pred_wrapper = pfun, 
+    fastshap::explain(fit, X = X, newdata = jack.dawson, pred_wrapper = pfun, 
                       nsim = nsims[i])
   })["elapsed"]
 }
-pal <- palette.colors(3, palette = "Okabe-Ito")  # colorblind friendly palette 
+palette("Okabe-Ito")  # colorblind friendly palette 
 plot(nsims, times1, type = "b", xlab = "Number of Monte Carlo repetitions",
-     ylab = "Time (in seconds)", las = 1, pch = 19, col = pal[1L],
+     ylab = "Time (in seconds)", las = 1, pch = 19, 
      xlim = c(0, max(nsims)), ylim = c(0, max(times1, times2, times3)))
-lines(nsims, times2, type = "b", pch = 19, col = pal[2L],)
-lines(nsims, times3, type = "b", pch = 19, col = pal[3L],)
+lines(nsims, times2, type = "b", pch = 19, col = 2)
+lines(nsims, times3, type = "b", pch = 19, col = 3)
 legend("topleft",
        legend = c("iBreakDown", "iml", "fastshap"),
-       lty = 1, pch = 19, col = pal, inset = 0.02)
+       lty = 1, pch = 19, col = 1:3, inset = 0.02)
+palette("default")  # switch back to R's default color palette
 ```
 The message to be taken from Figure~\ref{fig:titanic-benchmark} is that \pkg{fastshap} scales incredibly well with $N$ or $R$, as long as the corresponding \code{predict()} method does.
 
 Oh, and \pkg{fastshap} can produce instant (and exact) Shapley contributions for this example.
 
 ```{r titanic-exact}
-fastshap::explain(fit, newdata = jack, exact = TRUE)  # ExactSHAP
+fastshap::explain(fit, newdata = jack.dawson, exact = TRUE)  # ExactSHAP
 fastshap::explain(fit, X = X, pred_wrapper = pfun, nsim = 10000,
-                  newdata = jack)  # SampleSHAP
-predict(fit, newdata = jack, type = "terms")  # ExactSHAP (base R)
+                  newdata = jack.dawson)  # SampleSHAP
+predict(fit, newdata = jack.dawson, type = "terms")  # ExactSHAP (base R)
 ```
+
+**FIXME:** Need a plot of fastshap explaining 1, 10, and 100 rows for various values of \code{nsim} to show that the increase in computation is not additive (i.e., it won't take twice as long to epxlain two rows compared to just one, etc.)
 
 
 ## Example: Ames housing data
 
 Use `fastshap::explain()` to explain predictions from a LightGBM model on the Ames housing data using both exact and approximate explanations (**Note:** there's a current PR that will give exact functionality for LightGBM models, which is now on CRAN).
+
+To start, we'll load the Ames housing data from the \CRANpkg{AmesHousing} package \citep{R-AmesHousing} and fit a random forest using the highly efficient \CRANpkg{ranger} \citep{R-ranger} package.
+```{r ex-ames-load}
+library(ranger)
+
+# Set ggplot2 theme
+theme_set(theme_bw())
+
+# Load Ames housing data
+ames <- as.data.frame(AmesHousing::make_ames())
+
+# Fit a (default) random forest
+set.seed(1644)  # for reproducibility
+(rfo <- ranger(Sale_Price ~ ., data = ames))
+```
+
+Next we'll compute approximate Shapley values for the entire $2930 \times 80$ training set; to speed up computation, we'll turn on parallel processing. (Note that this took about one hour on a 3.1 GHz Dual-Core Intel Core i5 machine with 8 GB of RAM.)
+
+```{r ex-ames-fastshap, eval=FALSE}
+library(doParallel)
+library(fastshap)
+
+# Set up parallel backend
+cl <- if (.Platform$OS.type == "unix") 8 else makeCluster(8)
+registerDoParallel(cl)
+
+# Create data frame of only features
+X <- subset(ames, select = -Sale_Price)
+
+# Prediction wrapper
+pfun <- function(object, newdata) {
+  predict(object, data = newdata)$predictions
+}
+
+# Explain entire data set (useful for aggregated model summaries)
+ex.all <- explain(rfo, X = X, nsim = 100, pred_wrapper = pfun, adjust = TRUE,
+                  .parallel = TRUE)
+head(ex)  # peak at results
+```
+
+
+```{r ex-ames-fastshap-load, echo=FALSE}
+# Read in stored results
+X <- subset(ames, select = -Sale_Price)
+ex.all <- readRDS("data/ex-ames.rds")
+head(ex.all)  # peak at results
+```
+
+```{r ex-ames-fastshap-autoplot, fig.cap="TBD."}
+library(ggplot2)
+
+# Set ggplot2 theme
+theme_set(theme_bw())
+
+# Shapley summary plots (see Figure XYZ)
+p1 <- autoplot(ex.all, num_features = 20)
+p2 <- autoplot(ex.all, type = "dependence", feature = "Gr_Liv_Area", X = X,
+               color_by = "Central_Air", alpha = 0.3) +
+  scale_color_viridis_d(direction = -1) +  # cool colors
+  theme(legend.position = c(0.7, 0.2), 
+        legend.key = element_rect(colour = "transparent", fill = "white"))
+gridExtra::grid.arrange(p1, p2, nrow = 1)
+```
 
 
 ## Example: default of credit card clients
