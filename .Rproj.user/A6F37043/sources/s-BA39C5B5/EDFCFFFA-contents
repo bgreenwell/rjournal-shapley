@@ -52,11 +52,12 @@ If you notice a major issue, or have suggestions, feel free to contribute!
 * ~~Flesh out outline/section headers.~~
 * ~~Finish bar tab example (or switch to something better).~~
 * Discuss SHAP as a unification of Shapley, LIME, etc.
-* Find a good place to talk about "true to the model" versus "true to the data": https://arxiv.org/pdf/2006.16234.pdf (I think this is important for motivating the SampleSHAP approximation, which relies on randomly permuting instance values.)
-* Fill out KernalSHAP section.
+* Find a good place to talk about "true to the model" versus "true to the data": https://arxiv.org/pdf/2006.16234.pdf (I think this is important for motivating the SampleSHAP approximation, which relies on randomly permuting instance values.) Some remarks on causality here are probably also warranted.
+* Fill out KernelSHAP section.
 * Find motivating example for **iml** package; maybe credit card default risk?
 * Find motivating example for **fastshap** package; maybe Ames housing?
-* Find motivating example of interfacing with **shap** via **reticulate**. Can probably lift from the **fastshap** vigenette here: https://bgreenwell.github.io/fastshap/articles/fastshap-vs-shap.html.
+* Find motivating example of interfacing with **shap** via **reticulate**. Can probably lift from the **fastshap** vignette here: https://bgreenwell.github.io/fastshap/articles/fastshap-vs-shap.html.
+* DIscuss advantages and disadvantages described in \url{https://christophm.github.io/interpretable-ml-book/shapley.html}.
 
 
 <!-- ----------------------------------------------------------------------- -->
@@ -89,7 +90,7 @@ The above properties can be interpreted as follows: 1) the individual player con
 \end{equation}
 where $\mathcal{O}$ is a specific permutation of the players indices $\left\{1, 2, \dots, p\right\}$, $\pi\left(p\right)$ is the set of all suck permutations of size $p$, and $S^\mathcal{O}$ is the set of players joining the coalition before player $i$.
 
-In other words, the Shapley value is the average marginal contribution of a player across all possible coalitions in a game. Another way to interpret Equation~\eqref{eqn:shapley-value} is as follows. Imagine the coalitions (subsets of players) being formed one player at a time (which can happen in different orders), with the $i$-th player demanding a fair contribution/payout of $v\left(S^\mathcal{O} \cup i\right) - v\left(S^\mathcal{O}\right)$. The Shapley value for player $i$ is given by the average of this contribution over all possible permutations in which the coalition can be formed.
+In other words, the Shapley value is the average marginal contribution of a player across all possible coalitions in a game. Another way to interpret Equation \eqref{eqn:shapley-value} is as follows. Imagine the coalitions (subsets of players) being formed one player at a time (which can happen in different orders), with the $i$-th player demanding a fair contribution/payout of $v\left(S^\mathcal{O} \cup i\right) - v\left(S^\mathcal{O}\right)$. The Shapley value for player $i$ is given by the average of this contribution over all possible permutations in which the coalition can be formed.
 
 A simple example may help clarify the main ideas. Suppose three friends (players)---Alex, Brad, and Brandon---decide to go out for drinks after work (the game). They shared a few pitchers of beer, but nobody payed attention to how much each person drank (collaborated). What's a fair way to split the tab (total payout)? Suppose we knew the follow information, perhaps based on historical data:
 \begin{itemize}
@@ -110,7 +111,7 @@ A simple example may help clarify the main ideas. Suppose three friends (players
 
 \end{itemize}
 
-With only three players, we can enumerate all possible coalitions. In Table~\ref{tab:bar}, we list out all possible permutations of the three players and list the marginal contribution of each. Take the first row, for example. In this particular permutation, we start with Alex. We know that if Alex drinks alone, he'd spend $10$, so his marginal contribution by entering first is $10$. Next, we assume Brad enters the coalition. We know that if Alex and BRad drank together, they'd pay a total of $25$, leaving $15$ left over for Brad's marginal contribution. Similarly, if Brandon joins the party last, his marginal contribution would be only $5$ (the difference between $30$ and $25$). The Shapley value for each player is the average across all six possible permutations (these are the column averages reported in the last row). In this case, Brandon would get away with the smallest payout (i.e., have to pay the smallest portion of the total tab). The next time the bartender asks how you want to split the tab, whip out a pencil and do the math!
+With only three players, we can enumerate all possible coalitions. In Table~\ref{tab:bar}, we list out all possible permutations of the three players and list the marginal contribution of each. Take the first row, for example. In this particular permutation, we start with Alex. We know that if Alex drinks alone, he'd spend $10$, so his marginal contribution by entering first is $10$. Next, we assume Brad enters the coalition. We know that if Alex and Brad drank together, they'd pay a total of $25$, leaving $15$ left over for Brad's marginal contribution. Similarly, if Brandon joins the party last, his marginal contribution would be only $5$ (the difference between $30$ and $25$). The Shapley value for each player is the average across all six possible permutations (these are the column averages reported in the last row). In this case, Brandon would get away with the smallest payout (i.e., have to pay the smallest portion of the total tab). The next time the bartender asks how you want to split the tab, whip out a pencil and do the math!
 
 \begin{table}[!htb]
 \centering
@@ -134,7 +135,7 @@ Shapley contribution: & \$9.50      & \$14.67      & \$5.83       \\ \bottomrule
 \subsection{Shapley values for explaining predictions}
 <!-- ----------------------------------------------------------------------- -->
 
-\citet{strumbelj-2014-explaining} suggested using the Shapley value (Equation~\eqref{eqn:shapley-value}) to help explain predictions from a machine learning model. In the context of statistical/machines learning,
+\citet{strumbelj-2014-explaining} suggested using the Shapley value (Equation \eqref{eqn:shapley-value}) to help explain predictions from a machine learning model. In the context of statistical/machines learning,
 \begin{itemize}
 
   \item A game is represented by the prediction task for a single observation $x$.
@@ -152,19 +153,21 @@ In the following sections, we'll discuss several popular ways to compute Shapley
 \subsection{Choice of characteristic function $v$}
 <!-- ----------------------------------------------------------------------- -->
 
-The challenge of using Shapley values for the purpose of explaining predictions is in defining the functional form of $v$. As discussed in \citet{chen-2020-true}, there are several ways to do this. However, since we are primarily interested in understanding how much each feature contributed to a particular prediction, $v$ is typically related to the conditional expectation of the model's prediction. \citet{chen-2020-true} make the distinction between two possibilities, each of which differs in their conditioning argument. The Shapley value implementations discussed in this paper rely on what \citet{chen-2020-true} call the \dfn{interventional conditional expectation}, which can be expressed using \citet{pearl-2009-causality}'s $do\left(\cdot\right)$ operator:
+**FIXME: Need to make it clear how $v\left(S\right)$ is computed in the context of a machine learning model; maybe come up with a numeric example?**
+
+The challenge of using Shapley values for the purpose of explaining predictions is in defining the functional form of $v$. As discussed in \citet{chen-2020-true}, there are several ways to do this. However, since we are primarily interested in understanding how much each feature contributed to a particular prediction, $v$ is typically related to the conditional expectation of the model's prediction. \citet{chen-2020-true} make the distinction between two possibilities, each of which differs in their conditioning argument. The Shapley value implementations discussed in this paper rely on what \citet{chen-2020-true} call the \dfn{interventional conditional expectation}, which can be expressed using \citeauthor{pearl-2009-causality}'s \citeyearpar{pearl-2009-causality} $do\left(\cdot\right)$ operator:
 \begin{equation}
 \label{eqn:ice}
   v\left(S\right) = \mathbb{E}\left[f\left(x\right) | do\left(S\right)\right],
 \end{equation}
-Equation~\ref{eqn:ice} can be interpreted as the expected value of $f\left(x\right)$ given some intervention on the features in $S$, which assumed independence between the features in subset $S$ and the remaining features. Shapley values based on this formulation of $v$ are referred to as \dfn{interventional Shapley values} \citep{chen-2020-true}. The various Shapley value algorithms discussed over the next several sections fall under this form.
+Equation \eqref{eqn:ice} can be interpreted as the expected value of $f\left(x\right)$ given some intervention on the features in $S$, which assumed independence between the features in subset $S$ and the remaining features. Shapley values based on this formulation of $v$ are referred to as \dfn{interventional Shapley values} \citep{chen-2020-true}. The various Shapley value algorithms discussed over the next several sections fall under this form.
 
 
 <!-- ----------------------------------------------------------------------- -->
-\section{Estimating feature contributions in practice} 
+\section{Estimating Shapleh values/feature contributions in practice} 
 <!-- ----------------------------------------------------------------------- -->
 
-In this section, we'll detail several algorithms for estimating Shapley values for the purporse of explain predictions from a machine learning model.
+In this section, we'll detail several algorithms for estimating Shapley values for the purpose of explain predictions from a machine learning model.
 
 
 <!-- ----------------------------------------------------------------------- -->
@@ -193,13 +196,13 @@ Here, A single estimate of the contribution of $x_i$ to $f\left(x\right)$ is not
 \caption{Approximating the $i$-th feature's contribution to $f\left(x\right)$. \label{alg:SampleSHAP}}
 \end{algorithm}
 
-If there are $p$ features and $m$ instanced to be explained, this requires $2 \times R \times p \times m$ predictions (or calls to a scoring function). In practice, this can be quite computationally demanding, especially since $R$ needs to be large enough to produce good approximations to each $\phi_i\left(x\right)$. How large does $R$ need to be to produce accurate explanations? It depends on the variance of each feature in the observed training data, but typically $R >= 30--100$ will suffice (**FIXME: Is there a good reference for this?**). In Section~\ref{sec:fastshap}, we'll discuss a particularly optimized implementation of Algorithm~\ref{alg:SampleSHAP} that only requires $2mp$ calls to a scoring function.
+If there are $p$ features and $m$ instanced to be explained, this requires $2 \times R \times p \times m$ predictions (or calls to a scoring function). In practice, this can be quite computationally demanding, especially since $R$ needs to be large enough to produce good approximations to each $\phi_i\left(x\right)$. How large does $R$ need to be to produce accurate explanations? It depends on the variance of each feature in the observed training data, but typically $R \in \left[30, 100\right]$ will suffice (**FIXME: Is there a good reference for this?**). In Section~\ref{sec:fastshap}, we'll discuss a particularly optimized implementation of Algorithm~\ref{alg:SampleSHAP} that only requires $2mp$ calls to a scoring function.
 
 SampleSHAP can be computationally prohibitive if you need to explain large data sets. Fortunately, you often only need to explain a handful of predictions, for example the most extreme predictions. However, generating explanations for the entire training set, or a large enough sample thereof, can be useful for generating aggregated model summaries, like Shapley-based variable importance plots **FIXME: Add reference**.
 
 
 <!-- ----------------------------------------------------------------------- -->
-\subsection{LinearSHAP: Shapley values from additive linear models}
+\subsection{LinearSHAP: Shapley values from additive linear models \label{sec:LinearSHAP}}
 <!-- ----------------------------------------------------------------------- -->
 
 **FIXME:** I believe these results assume independence between features. Need to check corresponding reference in https://arxiv.org/pdf/2006.16234.pdf.
@@ -264,7 +267,89 @@ The next two sections illustrate more in-depth use of the \pkg{iml} and \pkg{fas
 \subsection{The \pkg{iml} package}
 <!-- ----------------------------------------------------------------------- -->
 
-TBD.
+The \pkg{iml} package includes a consistent interface to several machine learning interpretability, including: variable importance plots, as described in \citet{fisher-2019-models}, accumulated local effects (ALE) plots \citep{apley-2019-ale}; partial dependence plots \citep{friedman-2001-greedy}, individual conditional expectation (ICE) curves \citep{goldstein-peeking-2015}, the SampleSHAP algorithm described in \citet{strumbelj-2014-explaining} and discussed in Section \ref{sec:SampleSHAP}, the $H$-statistic for quantifying the strength of interaction effects \citep{friedman-2008-predictive}, tree-based surrogate models (see, for example, \citet[Chap. 5]{molnar-2019-iml}), and others..
+
+The \code{iml::Shapley()} function implements the SampleSHAP approximation described in Section \ref{sec:SampleSHAP}.
+
+
+<!-- ----------------------------------------------------------------------- -->
+\subsubsection{Example: credit card default}
+<!-- ----------------------------------------------------------------------- -->
+
+To illustrate the use of \code{iml::Shapley()} we'll use the credit card default data set \citep{cheng-2009-credit} available from the UCI Machine Learning Repository at \url{https://archive.ics.uci.edu/ml/datasets/default+of+credit+card+clients#}.
+
+To start, we'll download the data set into a file named \file{credit.xls}. Since it's an Excel file, we can read the data into R using the \CRANpkg{readxl} package \citep{R-readxl}:
+```{r ex-credit-download}
+# Download and read in the credit default data from the UCI ML repo
+tf <- tempfile(fileext = ".xls")
+url <- paste0("https://archive.ics.uci.edu/ml/machine-learning-databases/",
+              "00350/default%20of%20credit%20card%20clients.xls")
+download.file(url, destfile = tf)
+credit <- as.data.frame(readxl::read_xls(tf, skip = 1))
+```
+Next, we'll clean up the data set a bit by fixing the column names, re-encoding some of the categorical variables, removing the ID column, and coercing categorical variables to factors. A detailed description of the columns can be found in \citep{cheng-2009-credit}, or at \url{https://archive.ics.uci.edu/ml/datasets/default+of+credit+card+clients#}
+```{r ex-credit-clean}
+# Clean up column names a bit
+names(credit) <- tolower(names(credit))
+names(credit)[names(credit) == "default payment next month"] <- "default"
+
+# Remove ID column
+credit$id <- NULL
+
+# Clean up categorical features
+credit$sex <- ifelse(credit$sex == 1, yes = "male", no = "female")
+credit$education <- ifelse(
+  test = credit$education == 1, 
+  yes = "graduate school", 
+  no = ifelse(
+    test = credit$education == 2, 
+    yes = "university",
+    no = ifelse(
+      test = credit$education == 3,
+      yes = "high school",
+      no = "other"
+    )
+  )
+)
+credit$marriage <- ifelse(
+  test = credit$marriage == 1, 
+  yes = "married",
+  no = ifelse (
+    test = credit$marriage == 2,
+    yes = "single",
+    no = "other"
+  )
+)
+credit$default <- ifelse(credit$default == 1, yes = "yes", no = "no")
+
+# Coerce to factors
+for (i in seq_len(ncol(credit))) {
+  if (is.character(credit[[i]])) {
+    credit[[i]] <- as.factor(credit[[i]])
+  }
+}
+```
+Finally, we'll split the data into train test/test sets using a 70/30 split:
+```{r ex-credit-split}
+set.seed(1342)  # for reproducibility
+ids <- sample(nrow(credit), size = 0.7 * nrow(credit), replace = FALSE)
+credit.trn <- credit[ids, ]  # train
+credit.tst <- credit[-ids, ]  # test
+head(credit.trn)
+```
+
+For modelling, we'll fig a gradient boosted tree ensemble (GBM) using the \CRANpkg{R-gbm} package (originally by Greg Ridgeway). While more efficient  and scalable GBM implementations certainly exist in R (e.g., \pkg{xgboost} and \pkg{lightgbm}), they don't often support categorical features without having to re-encode them numerically.
+
+```{r ex-credit-gbm, fig.cap="Cross-validation performance as a function of the number of trees from the GBM model applied to the credit default data set."}
+library(gbm)
+
+# Fit a GBM
+set.seed(1554)  # for reproducibility
+gbm.trn <- gbm(ifelse(credit.trn$default == "yes", 1, 0) ~ ., data = credit.trn, 
+               distribution = "bernoulli", n.trees = 300, interaction.depth = 5, 
+               shrinkage = 0.1, cv.folds = 5)
+best <- gbm.perf(gbm.trn, plot.it = TRUE, method = "cv")  # plot CV performance versus number of trees
+```
 
 
 <!-- ----------------------------------------------------------------------- -->
@@ -275,7 +360,7 @@ TBD.
 
 Like many post-hoc interpretation techniques (e.g., PDPs and ICE curves), SampleSHAP can be made more efficient by generating all the data up front, and scoring it only once (or twice, in the case of SampleSHAP). For example, PDPs and ICE curves can be efficiently constructed with only a single call to a scoring function by generating all of the required data up front using a single cross-join operation (which can be done rather efficiently in SQL or Spark). The scored data can then be post-processed/aggregated and displayed as either a PDP or set of ICE curves. An example using Spark with \CRANpkg{sparklyr} \citet{R-sparklyr} can be found here: \url{https://github.com/bgreenwell/pdp/issues/97}.
 
-Fortunately, a similar trick can be exploited for SampleSHAP. Whether explaining a single instance using a large number of Monte Carlo repitions ($R$), or explaining a large number of instances with with $R = 1$, the basic idea is to generate all the required Frankenstein instances (Section~\ref{sec:SampleSHAP}) $b_1$ and $b_2$ upfront, and stored in matrices $\boldsymbol{B}_1$ and $\boldsymbol{B}_2$, respectively. 
+Fortunately, a similar trick can be exploited for SampleSHAP. Whether explaining a single instance using a large number of Monte Carlo repititions ($R$), or explaining a large number of instances with with $R = 1$, the basic idea is to generate all the required Frankenstein instances (Section~\ref{sec:SampleSHAP}) $b_1$ and $b_2$ upfront, and stored in matrices $\boldsymbol{B}_1$ and $\boldsymbol{B}_2$, respectively. 
 
 For example, suppose we wanted to estimate the contribution of $x_i$ for each of the $N$ rows of the available training data $\boldsymbol{X}$ using a single Monte-Carlo repetition in Algorithm~\ref{alg:SampleSHAP} (i.e., $R = 1$)\footnote{The same idea also extends to explaining new instances.}. To start, we can generate the $N$ random instances at once and store them in an $N \times p$ matrix $\boldsymbol{W}$. Rather generating $N$ random permutations $\mathcal{O}$, and constructing $b_1$ and $b_2$ one at a time, the \pkg{fastshap} package uses C++---via \CRANpkg{Rcpp} \citep{R-Rcpp}---to efficiently generate an $N \times p$ logical matrix $\boldsymbol{\mathcal{O}}$, where $\boldsymbol{\mathcal{O}}_{kl} = 1$ if feature $x_l$ appears before feature $x_i$ in the $k$-th permutation, and $0$ otherwise. This logical matrix can then be used to logically subset $\boldsymbol{X}$ and $\boldsymbol{W}$ to more efficiently construct $\boldsymbol{B}_1$ and $\boldsymbol{B}_2$ in a single swoop. The matrices (or data frames) can then be each scored once, and the difference taken, to generate a single replication of $\phi_i\left(x\right)$ for each row of $\boldsymbol{X}$.
 
@@ -286,7 +371,85 @@ Suppose instead we want to estimate the contribution of $x_i$ for a single insta
 \pkg{fastshap} is faster at computing Shapley values for a single feature for a large number of instances (or a large value of $R$ for a single instance). But what about a large number of features? Fortunately, Algorithm~\ref{alg:SampleSHAP} can be trivially parallelized across features, and this is built into \pkg{fastshap}.
 
 
-### Example: A simple benchmark comparison
+<!-- ----------------------------------------------------------------------- -->
+\subsubsection{Example: Ames housing data}
+<!-- ----------------------------------------------------------------------- -->
+
+For illustration, we'll use the Ames housing data \citep{ames-cock-2011} which are available in the \CRANpkg{AmesHousing} package \citep{R-AmesHousing}. These data describe the sale of individual residential properties in Ames, Iowa from 2006--2010. The data set contains 2930 observations, 80 features (23 nominal, 23 ordinal, 14 discrete, and 20 continuous), and a continuous target giving the sale price of the home (\code{Sale\_Price}). The version we'll load is a cleaned up version of the original data set and treats all categorical variables as nominal (see \code{?AmesHousing::make\_ames} for details).
+
+To start, we'll load the Ames housing data from the \CRANpkg{AmesHousing} package \citep{R-AmesHousing} and fit a (default) random forest to the entire data set using the highly efficient \CRANpkg{ranger} package \citep{R-ranger}.
+```{r ex-ames-load}
+library(ranger)
+
+# Set ggplot2 theme
+theme_set(theme_bw())
+
+# Load Ames housing data
+ames <- as.data.frame(AmesHousing::make_ames())
+
+# Fit a (default) random forest
+set.seed(1644)  # for reproducibility
+(rfo <- ranger(Sale_Price ~ ., data = ames))
+```
+
+Next we'll compute approximate Shapley values for the entire $2930 \times 80$ training set; to speed up computation, we'll turn on parallel processing using the \CRANpkg{doParallel} parallel backend \citep{R-doParallel}^footnote{Note that \pkg{fastshap} depends on the \CRANpkg{plyr} package \citep{R-plyr}, which supports any parallel backend compatible with \CRANpkg{foreach} \citep{R-foreach}}. (Note that this took about one hour on a 3.1 GHz Dual-Core Intel Core i5 machine with 8 GB of RAM.)
+
+```{r ex-ames-fastshap, eval=FALSE}
+library(doParallel)
+library(fastshap)
+
+# Set up parallel backend
+cl <- if (.Platform$OS.type == "unix") 8 else makeCluster(8)
+registerDoParallel(cl)
+
+# Create data frame of only features
+X <- subset(ames, select = -Sale_Price)
+
+# Prediction wrapper
+pfun <- function(object, newdata) {
+  predict(object, data = newdata)$predictions
+}
+
+# Explain entire data set (useful for aggregated model summaries)
+ex.all <- explain(rfo, X = X, nsim = 100, pred_wrapper = pfun, adjust = TRUE,
+                  .parallel = TRUE)
+head(ex)  # peak at results
+```
+
+
+```{r ex-ames-fastshap-load, echo=FALSE}
+# Read in stored results
+X <- subset(ames, select = -Sale_Price)
+ex.all <- readRDS("data/ex-ames.rds")
+head(ex.all)  # peak at results
+```
+
+As discussed in \citet{lundberg-2020-treeshap}, the individual feature contributions can be used to obtain a global understanding of a particular model (e.g., feature importance and feature effect plots).
+
+A valuable way to summarize the feature contributions from a set of data is to aggregate them into an overall Shapley-based variable importance metric \citep{lundberg-2020-treeshap}. You can compute the Shapley-based variable importance of a particular feature as the sum of the absolute values of the individual contributions across all rows; see Figure \ref{fig:ex-ames-fastshap-autoplot} (left) for an example on the Ames housing data. Here you can see that \code{Gr\_Liv\_Area} and \code{Overall\_Qual} (the overall quality rating of the property) are the most important features  in terms of their impact on, or contribution to, predicted sale price.
+
+Shapley-based dependence plots \citep{lundberg-2020-treeshap} show how a feature's value ($x$-axis) impacts the predicted outcome ($y$-axis). In Figure \ref{fig:ex-ames-fastshap-autoplot} (right) we show the dependence of \code{Gr\_Liv\_Area} (above ground square footage) on the predicted sale price for the Ames housing data. For additional insight, you can color these plots by any other feature (which can help understand potential interaction effects); for illustration, we used \code{Central\_Air} (whether or not central air is available) to color the individual points. Here you can see that \code{Gr\_Liv\_Area} has a roughly monotonic increasing relationship with predicted sale price, as you might expect.
+
+```{r ex-ames-fastshap-autoplot, fig.cap="Global summary plots of the Ames housing random forest model. Left: Shapley-based variable importance plot. Right: Shapley-based dependence of predicted sale price on above ground square footage."}
+library(ggplot2)
+
+# Set ggplot2 theme
+theme_set(theme_bw())
+
+# Shapley summary plots (see Figure XYZ)
+p1 <- autoplot(ex.all, num_features = 20)
+p2 <- autoplot(ex.all, type = "dependence", feature = "Gr_Liv_Area", X = X,
+               color_by = "Central_Air", alpha = 0.3) +
+  scale_color_viridis_d(direction = -1) +  # cool colors
+  theme(legend.position = c(0.7, 0.2), 
+        legend.key = element_rect(colour = "transparent", fill = "white"))
+gridExtra::grid.arrange(p1, p2, nrow = 1)
+```
+
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection{A simple benchmark comparison}
+<!-- ----------------------------------------------------------------------- -->
 
 This section provides a brief example comparing various implementations of Shapley values using [Kaggle’s Titanic: Machine Learning from Disaster competition](https://www.kaggle.com/c/titanic). While the true focus of the competition is to use machine learning to create a model that predicts which passengers survived the Titanic shipwreck, we’ll focus on explaining predictions from a simple logistic regression model.
 
@@ -318,7 +481,7 @@ Next, we’ll use the stats::glm() to fit a logistic regression model with only 
 ```{r titanic-glm}
 fit <- glm(Survived ~ ., data = titanic, family = binomial)
 ```
-Suppose we wanted to explain the predicted survival probability for a new passenger named Jack Dawson\footnote{Insipiration for this example was taken from \url{https://modeloriented.github.io/iBreakDown/articles/vignette_iBreakDown_titanic.html.}}:
+Suppose we wanted to explain the predicted survival probability for a new passenger named Jack Dawson\footnote{Inspiration for this example was taken from \url{https://modeloriented.github.io/iBreakDown/articles/vignette_iBreakDown_titanic.html.}}:
 ```{r titanic-jack}
 jack.dawson <- data.frame(
   Pclass = 3,
@@ -416,7 +579,7 @@ palette("default")  # switch back to R's default color palette
 ```
 The message to be taken from Figure~\ref{fig:titanic-benchmark} is that \pkg{fastshap} scales incredibly well with $N$ or $R$, as long as the corresponding \code{predict()} method does.
 
-Oh, and \pkg{fastshap} can produce instant (and exact) Shapley contributions for this example.
+Oh, and \pkg{fastshap} can produce instant (and exact) Shapley contributions for this example using LinearSHAP (Section~\ref{sec:LinearSHAP}):
 
 ```{r titanic-exact}
 fastshap::explain(fit, newdata = jack.dawson, exact = TRUE)  # ExactSHAP
@@ -424,86 +587,6 @@ fastshap::explain(fit, X = X, pred_wrapper = pfun, nsim = 10000,
                   newdata = jack.dawson)  # SampleSHAP
 predict(fit, newdata = jack.dawson, type = "terms")  # ExactSHAP (base R)
 ```
-
-**FIXME:** Need a plot of fastshap explaining 1, 10, and 100 rows for various values of \code{nsim} to show that the increase in computation is not additive (i.e., it won't take twice as long to epxlain two rows compared to just one, etc.)
-
-
-## Example: Ames housing data
-
-Use `fastshap::explain()` to explain predictions from a LightGBM model on the Ames housing data using both exact and approximate explanations (**Note:** there's a current PR that will give exact functionality for LightGBM models, which is now on CRAN).
-
-To start, we'll load the Ames housing data from the \CRANpkg{AmesHousing} package \citep{R-AmesHousing} and fit a random forest using the highly efficient \CRANpkg{ranger} \citep{R-ranger} package.
-```{r ex-ames-load}
-library(ranger)
-
-# Set ggplot2 theme
-theme_set(theme_bw())
-
-# Load Ames housing data
-ames <- as.data.frame(AmesHousing::make_ames())
-
-# Fit a (default) random forest
-set.seed(1644)  # for reproducibility
-(rfo <- ranger(Sale_Price ~ ., data = ames))
-```
-
-Next we'll compute approximate Shapley values for the entire $2930 \times 80$ training set; to speed up computation, we'll turn on parallel processing. (Note that this took about one hour on a 3.1 GHz Dual-Core Intel Core i5 machine with 8 GB of RAM.)
-
-```{r ex-ames-fastshap, eval=FALSE}
-library(doParallel)
-library(fastshap)
-
-# Set up parallel backend
-cl <- if (.Platform$OS.type == "unix") 8 else makeCluster(8)
-registerDoParallel(cl)
-
-# Create data frame of only features
-X <- subset(ames, select = -Sale_Price)
-
-# Prediction wrapper
-pfun <- function(object, newdata) {
-  predict(object, data = newdata)$predictions
-}
-
-# Explain entire data set (useful for aggregated model summaries)
-ex.all <- explain(rfo, X = X, nsim = 100, pred_wrapper = pfun, adjust = TRUE,
-                  .parallel = TRUE)
-head(ex)  # peak at results
-```
-
-
-```{r ex-ames-fastshap-load, echo=FALSE}
-# Read in stored results
-X <- subset(ames, select = -Sale_Price)
-ex.all <- readRDS("data/ex-ames.rds")
-head(ex.all)  # peak at results
-```
-
-```{r ex-ames-fastshap-autoplot, fig.cap="TBD."}
-library(ggplot2)
-
-# Set ggplot2 theme
-theme_set(theme_bw())
-
-# Shapley summary plots (see Figure XYZ)
-p1 <- autoplot(ex.all, num_features = 20)
-p2 <- autoplot(ex.all, type = "dependence", feature = "Gr_Liv_Area", X = X,
-               color_by = "Central_Air", alpha = 0.3) +
-  scale_color_viridis_d(direction = -1) +  # cool colors
-  theme(legend.position = c(0.7, 0.2), 
-        legend.key = element_rect(colour = "transparent", fill = "white"))
-gridExtra::grid.arrange(p1, p2, nrow = 1)
-```
-
-
-## Example: default of credit card clients
-
-Use `iml::Shapley()` to explain most extreme predictions.
-
-
-## Example: An example of interfacing directly with shap via reticulate would be cool!
-
-TBD.
 
 
 ## Summary
