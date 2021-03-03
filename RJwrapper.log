@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  2 MAR 2021 20:28
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  2 MAR 2021 20:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1467,35 +1467,36 @@ File: greenwell_files/figure-latex/titanic-benchmark-1.pdf Graphic file (type p
 df)
 <use greenwell_files/figure-latex/titanic-benchmark-1.pdf>
 Package pdftex.def Info: greenwell_files/figure-latex/titanic-benchmark-1.pdf u
-sed on input line 541.
+sed on input line 548.
 (pdftex.def)             Requested size: 398.33858pt x 191.75867pt.
-LaTeX Font Info:    Try loading font information for TS1+zi4 on input line 548.
+LaTeX Font Info:    Try loading font information for TS1+zi4 on input line 555.
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/inconsolata/ts1zi4.fd
 File: ts1zi4.fd 2016/12/29 TS1/zi4 (Inconsolata)
 )
 LaTeX Font Info:    Font shape `TS1/zi4/m/n' will be
-(Font)              scaled to size 9.18004pt on input line 548.
+(Font)              scaled to size 9.18004pt on input line 555.
 Package microtype Info: Loading generic settings for font family
 (microtype)             `zi4' (encoding: TS1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
+[7 <./greenwell_files/figure-latex/titanic-benchmark-1.pdf>]
 
-Package natbib Warning: Citation `R-AmesHousing' on page 7 undefined on input l
-ine 606.
+Package natbib Warning: Citation `R-AmesHousing' on page 8 undefined on input l
+ine 613.
 
 
-Package natbib Warning: Citation `R-ranger' on page 7 undefined on input line 6
-07.
+Package natbib Warning: Citation `R-ranger' on page 8 undefined on input line 6
+14.
 
-[7 <./greenwell_files/figure-latex/titanic-benchmark-1.pdf>] [8]
+[8]
 <greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1.pdf, id=205, 410.5337
 5pt x 258.9675pt>
 File: greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1.pdf Graphic file
  (type pdf)
 <use greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1.pdf>
 Package pdftex.def Info: greenwell_files/figure-latex/ex-ames-fastshap-autoplot
--1.pdf used on input line 726.
+-1.pdf used on input line 733.
 (pdftex.def)             Requested size: 398.33858pt x 251.27322pt.
 (./RJwrapper.bbl (./RJwrapper.brf)
 \tf@brf=\write6
@@ -1506,15 +1507,15 @@ LaTeX Font Info:    Font shape `T1/ppl/bx/n' in size <12> not available
 [9])
 
 LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
-(Font)              using `T1/zi4/m/n' instead on input line 768.
+(Font)              using `T1/zi4/m/n' instead on input line 775.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 768--769
+Underfull \hbox (badness 10000) in paragraph at lines 775--776
 
  []
 
 LaTeX Font Info:    Font shape `T1/zi4/m/it' will be
-(Font)              scaled to size 9.18004pt on input line 779.
+(Font)              scaled to size 9.18004pt on input line 786.
 Package microtype Info: Character `textendash ' is missing
 (microtype)             in font `T1/zi4/m/it/9'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1522,7 +1523,7 @@ Package microtype Info: Character `textemdash ' is missing
 (microtype)             in font `T1/zi4/m/it/9'.
 (microtype)             Ignoring protrusion settings for this character.
 )
-Underfull \hbox (badness 10000) in paragraph at lines 779--32
+Underfull \hbox (badness 10000) in paragraph at lines 786--32
 
  []
 
@@ -1576,7 +1577,7 @@ texmf-dist/fonts/type1/urw/palatino/uplbi8a.pfb></usr/local/texlive/2017/texmf-
 dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2017/texmf-dist/fo
 nts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2017/texmf-dist/fonts/typ
 e1/urw/palatino/uplri8a.pfb>
-Output written on RJwrapper.pdf (11 pages, 396551 bytes).
+Output written on RJwrapper.pdf (11 pages, 396714 bytes).
 PDF statistics:
  324 PDF objects out of 1000 (max. 8388607)
  285 compressed objects within 3 object streams

@@ -327,23 +327,30 @@ gridExtra::grid.arrange(p1, p2, p3, nrow = 1)
 Each package comes loaded with it’s own bells and whistles (e.g., \pkg{iml} and \pkg{iBreakDown} have particularly fantastic visualizations). The main selling point of \pkg{fastshap} is speed! For example, all three packages (in fact, all general and practical implementations of Shapley values) use Algorithm~\ref{alg:SampleSHAP} which requires a large number of Monte Carlo repetitions to achieve accurate results. Below is a simple benchmark looking at the estimated time (in seconds) to explain Jack’s prediction as a function of the number of Monte Carlo repetitions for each implementation. (Note that this comparison does not make use of \pkg{fastshap}'s feature-wise parallelization.)
 
 ```{r titanic-benchmark, fig.cap="Quick benchmark between three different implementations of SampleSHAP for explaining Jack's unfortunate prediction."}
+# Number of Monte Carlo reps for each simulation
 nsims <- c(1, 5, 10, 25, 50, 75, seq(from = 100, to = 1000, by = 100))
+
+# Initialize vectors to store timings
 times1 <- times2 <- times3 <- numeric(length(nsims))
-set.seed(904)
-for (i in seq_along(nsims)) {
+
+# Run simulation
+set.seed(904)  # for reproducibility
+for (i in seq_along(nsims)) {  # iBreakDown
   message("nsim = ", nsims[i], "...")
   times1[i] <- system.time({
     iBreakDown::shap(explainer, B = nsims[i], new_observation = jack.dawson)
   })["elapsed"]
-  times2[i] <- system.time({
+  times2[i] <- system.time({  # iml
     iml::Shapley$new(predictor, x.interest = jack.dawson, 
                      sample.size = nsims[i])
   })["elapsed"]
-  times3[i] <- system.time({
+  times3[i] <- system.time({  # fastshap
     fastshap::explain(fit, X = X, newdata = jack.dawson, pred_wrapper = pfun, 
                       nsim = nsims[i])
   })["elapsed"]
 }
+
+# Plot results
 palette("Okabe-Ito")  # colorblind friendly palette 
 plot(nsims, times1, type = "b", xlab = "Number of Monte Carlo repetitions",
      ylab = "Time (in seconds)", las = 1, pch = 19, 

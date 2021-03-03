@@ -3,23 +3,23 @@
     "path": "~/Dropbox/rjournal/rjournal-shapley/greenwell.Rmd",
     "project_path": "greenwell.Rmd",
     "type": "r_markdown",
-    "hash": "2274575309",
+    "hash": "0",
     "contents": "",
     "dirty": false,
     "created": 1614632673859.0,
     "source_on_save": false,
     "relative_order": 1,
     "properties": {
-        "cursorPosition": "368,238",
-        "scrollLine": "344",
+        "cursorPosition": "352,14",
+        "scrollLine": "327",
         "last_setup_crc32": "BA39C5B523a8f45d"
     },
     "folds": "",
-    "lastKnownWriteTime": 1614734888,
+    "lastKnownWriteTime": 1614735248,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1614734888300,
+    "last_content_update": 1614735248326,
     "read_only": false,
     "read_only_alternatives": []
 }
