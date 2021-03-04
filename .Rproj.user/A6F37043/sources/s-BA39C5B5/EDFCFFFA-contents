@@ -340,16 +340,18 @@ head(credit.trn)
 
 For modelling, we'll fig a gradient boosted tree ensemble (GBM) using the \CRANpkg{R-gbm} package (originally by Greg Ridgeway). While more efficient  and scalable GBM implementations certainly exist in R (e.g., \pkg{xgboost} and \pkg{lightgbm}), they don't often support categorical features without having to re-encode them numerically.
 
-```{r ex-credit-gbm, fig.cap="Cross-validation performance as a function of the number of trees from the GBM model applied to the credit default data set."}
+```{r ex-credit-gbm, fig.cap="5-fold cross-validation performance as a function of the number of trees from the GBM model applied to the credit default data set."}
 library(gbm)
 
-# Fit a GBM
+# Fit a GBM to the credit default training set
 set.seed(1554)  # for reproducibility
 gbm.trn <- gbm(ifelse(credit.trn$default == "yes", 1, 0) ~ ., data = credit.trn, 
                distribution = "bernoulli", n.trees = 300, interaction.depth = 5, 
                shrinkage = 0.1, cv.folds = 5)
-best <- gbm.perf(gbm.trn, plot.it = TRUE, method = "cv")  # plot CV performance versus number of trees
+par(las = 1)  # horizontal y-axis labels
+(best <- gbm.perf(gbm.trn, plot.it = TRUE, method = "cv"))
 ```
+
 
 
 <!-- ----------------------------------------------------------------------- -->

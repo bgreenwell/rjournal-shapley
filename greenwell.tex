@@ -525,12 +525,13 @@ features without having to re-encode them numerically.
 \begin{Sinput}
 library(gbm)
 
-# Fit a GBM
+# Fit a GBM to the credit default training set
 set.seed(1554)  # for reproducibility
 gbm.trn <- gbm(ifelse(credit.trn$default == "yes", 1, 0) ~ ., data = credit.trn, 
                distribution = "bernoulli", n.trees = 300, interaction.depth = 5, 
                shrinkage = 0.1, cv.folds = 5)
-gbm.perf(gbm.trn)  # plot CV performance versus number of trees
+par(las = 1)  # horizontal y-axis labels
+(best <- gbm.perf(gbm.trn, plot.it = TRUE, method = "cv"))
 \end{Sinput}
 \begin{figure}[!htb]
 
@@ -538,7 +539,7 @@ gbm.perf(gbm.trn)  # plot CV performance versus number of trees
 
 }
 
-\caption[Cross-validation performance as a function of the number of trees from the GBM model applied to the credit default data set]{Cross-validation performance as a function of the number of trees from the GBM model applied to the credit default data set.}\label{fig:ex-credit-gbm}
+\caption[5-fold cross-validation performance as a function of the number of trees from the GBM model applied to the credit default data set]{5-fold cross-validation performance as a function of the number of trees from the GBM model applied to the credit default data set.}\label{fig:ex-credit-gbm}
 \end{figure}
 \begin{Soutput}
 #> [1] 89

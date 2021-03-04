@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  3 MAR 2021 15:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  3 MAR 2021 16:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1450,11 +1450,11 @@ ut line 435.
 File: greenwell_files/figure-latex/ex-credit-gbm-1.pdf Graphic file (type pdf)
 <use greenwell_files/figure-latex/ex-credit-gbm-1.pdf>
 Package pdftex.def Info: greenwell_files/figure-latex/ex-credit-gbm-1.pdf used 
-on input line 537.
+on input line 538.
 (pdftex.def)             Requested size: 398.33858pt x 188.79333pt.
 
 Package natbib Warning: Citation `R-sparklyr' on page 7 undefined on input line
- 559.
+ 560.
 
 [7 <./greenwell_files/figure-latex/ex-credit-gbm-1.pdf>] [8]
 <greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1.pdf, id=303, 410.5337
@@ -1463,11 +1463,11 @@ File: greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1.pdf Graphic file
  (type pdf)
 <use greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1.pdf>
 Package pdftex.def Info: greenwell_files/figure-latex/ex-ames-fastshap-autoplot
--1.pdf used on input line 770.
+-1.pdf used on input line 771.
 (pdftex.def)             Requested size: 398.33858pt x 251.27322pt.
 [9]
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 8.16003pt on input line 825.
+(Font)              scaled to size 8.16003pt on input line 826.
 Package microtype Info: Character `textendash ' is missing
 (microtype)             in font `T1/zi4/m/n/8'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1481,7 +1481,7 @@ File: greenwell_files/figure-latex/titanic-jack-explanations-plot-1.pdf Graphic
  file (type pdf)
 <use greenwell_files/figure-latex/titanic-jack-explanations-plot-1.pdf>
 Package pdftex.def Info: greenwell_files/figure-latex/titanic-jack-explanations
--plot-1.pdf used on input line 916.
+-plot-1.pdf used on input line 917.
 (pdftex.def)             Requested size: 398.33858pt x 251.4477pt.
 [11]
 <greenwell_files/figure-latex/titanic-benchmark-1.pdf, id=340, 404.51125pt x 19
@@ -1490,15 +1490,15 @@ File: greenwell_files/figure-latex/titanic-benchmark-1.pdf Graphic file (type p
 df)
 <use greenwell_files/figure-latex/titanic-benchmark-1.pdf>
 Package pdftex.def Info: greenwell_files/figure-latex/titanic-benchmark-1.pdf u
-sed on input line 974.
+sed on input line 975.
 (pdftex.def)             Requested size: 398.33858pt x 191.75867pt.
-LaTeX Font Info:    Try loading font information for TS1+zi4 on input line 981.
+LaTeX Font Info:    Try loading font information for TS1+zi4 on input line 982.
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/inconsolata/ts1zi4.fd
 File: ts1zi4.fd 2016/12/29 TS1/zi4 (Inconsolata)
 )
 LaTeX Font Info:    Font shape `TS1/zi4/m/n' will be
-(Font)              scaled to size 9.18004pt on input line 981.
+(Font)              scaled to size 9.18004pt on input line 982.
 Package microtype Info: Loading generic settings for font family
 (microtype)             `zi4' (encoding: TS1).
 (microtype)             For optimal results, create family-specific settings.
@@ -1511,15 +1511,15 @@ Jwrapper.bbl (./RJwrapper.brf)
 [13 <./greenwell_files/figure-latex/titanic-benchmark-1.pdf>] [14])
 
 LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
-(Font)              using `T1/zi4/m/n' instead on input line 1046.
+(Font)              using `T1/zi4/m/n' instead on input line 1047.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1046--1047
+Underfull \hbox (badness 10000) in paragraph at lines 1047--1048
 
  []
 
 LaTeX Font Info:    Font shape `T1/zi4/m/it' will be
-(Font)              scaled to size 9.18004pt on input line 1057.
+(Font)              scaled to size 9.18004pt on input line 1058.
 Package microtype Info: Character `textendash ' is missing
 (microtype)             in font `T1/zi4/m/it/9'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1527,7 +1527,7 @@ Package microtype Info: Character `textemdash ' is missing
 (microtype)             in font `T1/zi4/m/it/9'.
 (microtype)             Ignoring protrusion settings for this character.
 )
-Underfull \hbox (badness 10000) in paragraph at lines 1057--32
+Underfull \hbox (badness 10000) in paragraph at lines 1058--32
 
  []
 
@@ -1543,7 +1543,7 @@ Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 34.
 Package rerunfilecheck Info: File `RJwrapper.out' has not changed.
 (rerunfilecheck)             Checksum: 284AE0525D31694897EFE4EF513E2D96;1269.
 Package rerunfilecheck Info: File `RJwrapper.brf' has not changed.
-(rerunfilecheck)             Checksum: B45309FB1F59FDAF8974AEE64A3AA0C2;2523.
+(rerunfilecheck)             Checksum: CE59BCD221D747D04B9AE1E8478A149F;2523.
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
@@ -1555,11 +1555,11 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 34.
 Here is how much of TeX's memory you used:
  22823 strings out of 492995
  406978 string characters out of 6132704
- 507300 words of memory out of 5000000
+ 507307 words of memory out of 5000000
  25530 multiletter control sequences out of 15000+600000
  81855 words of font info for 323 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 62i,16n,94p,425b,709s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 62i,16n,94p,425b,713s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): name{Hfootnote.3} has been referenced but does not exi
 st, replaced by a fixed one
 
@@ -1586,10 +1586,10 @@ pe1/urw/palatino/uplbi8a.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/ur
 w/palatino/uplr8a.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/urw/palat
 ino/uplr8a.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/urw/palatino/upl
 ri8a.pfb>
-Output written on RJwrapper.pdf (15 pages, 423804 bytes).
+Output written on RJwrapper.pdf (15 pages, 423772 bytes).
 PDF statistics:
- 521 PDF objects out of 1000 (max. 8388607)
- 473 compressed objects within 5 object streams
+ 520 PDF objects out of 1000 (max. 8388607)
+ 472 compressed objects within 5 object streams
  84 named destinations out of 1000 (max. 500000)
  56977 words of extra memory for PDF output out of 61914 (max. 10000000)
 
