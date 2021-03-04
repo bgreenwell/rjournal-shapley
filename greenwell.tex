@@ -48,6 +48,10 @@ to contribute!
 \item
   DIscuss advantages and disadvantages described in
   \url{https://christophm.github.io/interpretable-ml-book/shapley.html}.
+\item
+  Mention the technical difference between SHAP (which satisfies the
+  consistency property) and Shapley values, and how we loosen the
+  distinction of the terminology here.
 \end{itemize}
 
 \section{Background}
@@ -63,14 +67,14 @@ player receives their ``fair'' share. The Shapley value is one such
 solution and the only one that uniquely satisfies a particular set of
 ``fairness properties''.
 
-Let \(v\) be a value function that maps subsets of players to the real
-numbers: \(v : 2^p \rightarrow \mathbb{R}\), where
-\(v\left(S\right) = \Delta_S\) and \(v\left(\emptyset\right) = 0\),
-where \(\emptyset\) is the empty set (i.e., zero players). Let
-\(\phi_i\left(v\right)\) be the contribution (or portion of the total
-payout) attributed to player \(i\) in a particular game with total
-payout \(v\left(S\right) = \Delta_S\). The Shapley value satisfies the
-following properties:
+Let \(v\) be a \dfn{characteristic function} that assigns a value to
+each subset of players; in particular,
+\(v : 2^p \rightarrow \mathbb{R}\), where \(v\left(S\right) = \Delta_S\)
+and \(v\left(\emptyset\right) = 0\), where \(\emptyset\) is the empty
+set (i.e., zero players). Let \(\phi_i\left(v\right)\) be the
+contribution (or portion of the total payout) attributed to player \(i\)
+in a particular game with total payout \(v\left(S\right) = \Delta_S\).
+The Shapley value satisfies the following properties:
 
 \begin{itemize}
 
@@ -139,21 +143,21 @@ information, perhaps based on historical data:
 \end{itemize}
 
 With only three players, we can enumerate all possible coalitions. In
-Table\textasciitilde{}\ref{tab:bar}, we list out all possible
-permutations of the three players and list the marginal contribution of
-each. Take the first row, for example. In this particular permutation,
-we start with Alex. We know that if Alex drinks alone, he'd spend
-\(10\), so his marginal contribution by entering first is \(10\). Next,
-we assume Brad enters the coalition. We know that if Alex and Brad drank
-together, they'd pay a total of \(25\), leaving \(15\) left over for
-Brad's marginal contribution. Similarly, if Brandon joins the party
-last, his marginal contribution would be only \(5\) (the difference
-between \(30\) and \(25\)). The Shapley value for each player is the
-average across all six possible permutations (these are the column
-averages reported in the last row). In this case, Brandon would get away
-with the smallest payout (i.e., have to pay the smallest portion of the
-total tab). The next time the bartender asks how you want to split the
-tab, whip out a pencil and do the math!
+Table \ref{tab:bar}, we list out all possible permutations of the three
+players and list the marginal contribution of each. Take the first row,
+for example. In this particular permutation, we start with Alex. We know
+that if Alex drinks alone, he'd spend \(10\), so his marginal
+contribution by entering first is \(10\). Next, we assume Brad enters
+the coalition. We know that if Alex and Brad drank together, they'd pay
+a total of \(25\), leaving \(15\) left over for Brad's marginal
+contribution. Similarly, if Brandon joins the party last, his marginal
+contribution would be only \(5\) (the difference between \(30\) and
+\(25\)). The Shapley value for each player is the average across all six
+possible permutations (these are the column averages reported in the
+last row). In this case, Brandon would get away with the smallest payout
+(i.e., have to pay the smallest portion of the total tab). The next time
+the bartender asks how you want to split the tab, whip out a pencil and
+do the math!
 
 \begin{table}[!htb]
 \centering
@@ -193,9 +197,11 @@ Shapley values in practice.
 
 \subsection{Choice of characteristic function $v$}
 
-\textbf{FIXME: Need to make it clear how \(v\left(S\right)\) is computed
-in the context of a machine learning model; maybe come up with a numeric
-example?}
+\textbf{FIXME:} Need to make it clear how \(v\left(S\right)\) is
+computed in the context of a machine learning model; maybe come up with
+a numeric example?
+
+\textbf{FIXME:} Clear up notation (e.g., \(S^c\) or \(x_{S^c}\)?)
 
 The challenge of using Shapley values for the purpose of explaining
 predictions is in defining the functional form of \(v\). As discussed in
@@ -212,17 +218,22 @@ using \citeauthor{pearl-2009-causality}'s
 \citeyearpar{pearl-2009-causality} \(do\left(\cdot\right)\) operator:
 \begin{equation}
 \label{eqn:ice}
-  v\left(S\right) = \mathbb{E}\left[f\left(x\right) | do\left(S\right)\right],
-\end{equation} Equation \eqref{eqn:ice} can be interpreted as the
-expected value of \(f\left(x\right)\) given some intervention on the
-features in \(S\), which assumed independence between the features in
-subset \(S\) and the remaining features. Shapley values based on this
-formulation of \(v\) are referred to as
+\begin{split}
+  v\left(S\right) &= \mathbb{E}\left[f\left(x_S, x_{S^c}\right) | do\left(x_S\right)\right] \\
+                  &= \int f\left(x_S, x_{S^c}\right) p\left(x_{S^c}\right) d x_{S^c},
+\end{split}
+\end{equation} where \(S^c\) is the complement \(S\), \(x_S\) and
+\(x_{S^c}\) are the set of features in \(S\) and \(S^c\), respectively,
+and \(p\left(x_{S^c}\right)\) is the joint probability density of
+\(x_{S^c}\). Equation \eqref{eqn:ice} can be interpreted as the expected
+value of \(f\left(x\right)\) given some intervention on the features in
+\(S\), which assumes independence between \(x_S\) and \(x_{S^c}\).
+Shapley values based on this formulation of \(v\) are referred to as
 \dfn{interventional Shapley values} \citep{chen-2020-true}. The various
 Shapley value algorithms discussed over the next several sections fall
 under this form.
 
-\section{Estimating Shapleh values/feature contributions in practice}
+\section{Estimating Shapley values/feature contributions in practice}
 
 In this section, we'll detail several algorithms for estimating Shapley
 values for the purpose of explain predictions from a machine learning
@@ -235,8 +246,7 @@ for moderately large \(p\). TO that end,
 \citet{strumbelj-2014-explaining} suggest a Monte Carlo approximation,
 which we'll call SampleSHAP, that assumes independent
 features\footnote{While SampleSHAP assumes independent features, several arguments can be made in favor of this assumption; see, for example, \citet{chen-2020-true} and the references therein.}.
-Their approach is described in
-Algorithm\textasciitilde{}\ref{alg:SampleSHAP}.
+Their approach is described in Algorithm \ref{alg:SampleSHAP}.
 
 Here, A single estimate of the contribution of \(x_i\) to
 \(f\left(x\right)\) is nothing the more than the difference between two
@@ -274,32 +284,29 @@ demanding, especially since \(R\) needs to be large enough to produce
 good approximations to each \(\phi_i\left(x\right)\). How large does
 \(R\) need to be to produce accurate explanations? It depends on the
 variance of each feature in the observed training data, but typically
-\(R \in \left[30, 100\right]\) will suffice (\textbf{FIXME: Is there a
-good reference for this?}). In
-Section\textasciitilde{}\ref{sec:fastshap}, we'll discuss a particularly
-optimized implementation of
-Algorithm\textasciitilde{}\ref{alg:SampleSHAP} that only requires
-\(2mp\) calls to a scoring function.
+\(R \in \left[30, 100\right]\) will suffice (\textbf{FIXME:} Is there a
+good reference for this?). In Section \ref{sec:fastshap}, we'll discuss
+a particularly optimized implementation of Algorithm
+\ref{alg:SampleSHAP} that only requires \(2mp\) calls to a scoring
+function.
 
 SampleSHAP can be computationally prohibitive if you need to explain
 large data sets. Fortunately, you often only need to explain a handful
 of predictions, for example the most extreme predictions. However,
 generating explanations for the entire training set, or a large enough
 sample thereof, can be useful for generating aggregated model summaries,
-like Shapley-based variable importance plots \textbf{FIXME: Add
-reference}.
+like Shapley-based variable importance plots \textbf{FIXME:} Add
+reference.
 
 \subsection{LinearSHAP: Shapley values from additive linear models \label{sec:LinearSHAP}}
 
-\textbf{FIXME:} I believe these results assume independence between
-features. Need to check corresponding reference in
-\url{https://arxiv.org/pdf/2006.16234.pdf}.
-
-\textbf{FIXME:} Cite somewhere \cite{strumbelj-2014-explaining}.
+\textbf{FIXME:} Proof of the following is given in
+\citet{aas-2020-explaining}.
 
 First, lets discuss how a feature's value contributes to a prediction
-\(f\left(X\right)\) in a simple (additive) linear model. That is, let's
-assume for a moment that \(f\) takes the form \begin{equation}
+\(f\left(X\right)\) in a simple (additive) linear model with independent
+features. That is, let's assume for a moment that \(f\) takes the form
+\begin{equation}
 \nonumber
   f\left(X\right) = \beta_0 + \beta_1 X_1 + \dots + \beta_p X_p
 \end{equation}
@@ -339,9 +346,8 @@ Shapley methods (e.g., DeepSHAP, which is provides approximate Shapley
 values for deep learning models).
 
 The \CRANpkg{iml} package \citep{R-iml} provides the \code{Shapley()}
-function, which is a direct implementation of
-Algorithm\textasciitilde{}\ref{alg:SampleSHAP}. It is written in
-\CRANpkg{R6} \citep{R-R6}.
+function, which is a direct implementation of Algorithm
+\ref{alg:SampleSHAP}. It is written in \CRANpkg{R6} \citep{R-R6}.
 
 Package \CRANpkg{iBreakDown} implements a general approach to explaining
 the predictions from supervised models, called \dfn{Break Down}
@@ -546,7 +552,38 @@ par(las = 1)  # horizontal y-axis labels
 \end{Soutput}
 \end{Schunk}
 
-\subsection{The \pkg{fastshap} package}
+Finish later\ldots{}
+
+\begin{Schunk}
+\begin{Sinput}
+p <- predict(gbm.trn, newdata = credit.tst, n.trees = "best")
+max(p)
+\end{Sinput}
+\begin{Soutput}
+#> [1] 3.532867
+\end{Soutput}
+\begin{Sinput}
+pfun <- function(object, newdata) {
+  predict(object, newdata = newdata, n.trees = "best")
+}
+predictor <- iml::Predictor$new(gbm.trn, data = credit.trn, y = "default",
+                                predict.fun = pfun)
+set.seed(2241)  # for reproducibility
+ex <- iml::Shapley$new(predictor, x.interest = credit.tst[which.max(p), ], 
+                       sample.size = 100)
+plot(ex)
+\end{Sinput}
+\begin{figure}[!htb]
+
+{\centering \includegraphics[width=1\linewidth]{greenwell_files/figure-latex/ex-credit-gbm-predict-1} 
+
+}
+
+\caption[TBD]{TBD.}\label{fig:ex-credit-gbm-predict}
+\end{figure}
+\end{Schunk}
+
+\subsection{The \pkg{fastshap} package \label{sec:fastshap}}
 
 Like many post-hoc interpretation techniques (e.g., PDPs and ICE
 curves), SampleSHAP can be made more efficient by generating all the
@@ -564,14 +601,14 @@ Fortunately, a similar trick can be exploited for SampleSHAP. Whether
 explaining a single instance using a large number of Monte Carlo
 repititions (\(R\)), or explaining a large number of instances with with
 \(R = 1\), the basic idea is to generate all the required Frankenstein
-instances (Section\textasciitilde{}\ref{sec:SampleSHAP}) \(b_1\) and
-\(b_2\) upfront, and stored in matrices \(\boldsymbol{B}_1\) and
-\(\boldsymbol{B}_2\), respectively.
+instances (Section \ref{sec:SampleSHAP}) \(b_1\) and \(b_2\) upfront,
+and stored in matrices \(\boldsymbol{B}_1\) and \(\boldsymbol{B}_2\),
+respectively.
 
 For example, suppose we wanted to estimate the contribution of \(x_i\)
 for each of the \(N\) rows of the available training data
-\(\boldsymbol{X}\) using a single Monte-Carlo repetition in
-Algorithm\textasciitilde{}\ref{alg:SampleSHAP} (i.e.,
+\(\boldsymbol{X}\) using a single Monte-Carlo repetition in Algorithm
+\ref{alg:SampleSHAP} (i.e.,
 \(R = 1\))\footnote{The same idea also extends to explaining new instances.}.
 To start, we can generate the \(N\) random instances at once and store
 them in an \(N \times p\) matrix \(\boldsymbol{W}\). Rather generating
@@ -600,9 +637,8 @@ described in Sections\ldots{}
 \pkg{fastshap} is faster at computing Shapley values for a single
 feature for a large number of instances (or a large value of \(R\) for a
 single instance). But what about a large number of features?
-Fortunately, Algorithm\textasciitilde{}\ref{alg:SampleSHAP} can be
-trivially parallelized across features, and this is built into
-\pkg{fastshap}.
+Fortunately, Algorithm \ref{alg:SampleSHAP} can be trivially
+parallelized across features, and this is built into \pkg{fastshap}.
 
 \subsubsection{Example: Ames housing data}
 
@@ -926,13 +962,13 @@ Each package comes loaded with it's own bells and whistles (e.g.,
 \pkg{iml} and \pkg{iBreakDown} have particularly fantastic
 visualizations). The main selling point of \pkg{fastshap} is speed! For
 example, all three packages (in fact, all general and practical
-implementations of Shapley values) use
-Algorithm\textasciitilde{}\ref{alg:SampleSHAP} which requires a large
-number of Monte Carlo repetitions to achieve accurate results. Below is
-a simple benchmark looking at the estimated time (in seconds) to explain
-Jack's prediction as a function of the number of Monte Carlo repetitions
-for each implementation. (Note that this comparison does not make use of
-\pkg{fastshap}'s feature-wise parallelization.)
+implementations of Shapley values) use Algorithm \ref{alg:SampleSHAP}
+which requires a large number of Monte Carlo repetitions to achieve
+accurate results. Below is a simple benchmark looking at the estimated
+time (in seconds) to explain Jack's prediction as a function of the
+number of Monte Carlo repetitions for each implementation. (Note that
+this comparison does not make use of \pkg{fastshap}'s feature-wise
+parallelization.)
 
 \begin{Schunk}
 \begin{Sinput}
@@ -983,14 +1019,13 @@ palette("default")  # switch back to R's default color palette
 \end{Sinput}
 \end{Schunk}
 
-The message to be taken from
-Figure\textasciitilde{}\ref{fig:titanic-benchmark} is that
+The message to be taken from Figure \ref{fig:titanic-benchmark} is that
 \pkg{fastshap} scales incredibly well with \(N\) or \(R\), as long as
 the corresponding \code{predict()} method does.
 
 Oh, and \pkg{fastshap} can produce instant (and exact) Shapley
-contributions for this example using LinearSHAP
-(Section\textasciitilde{}\ref{sec:LinearSHAP}):
+contributions for this example using LinearSHAP (Section
+\ref{sec:LinearSHAP}):
 
 \begin{Schunk}
 \begin{Sinput}
