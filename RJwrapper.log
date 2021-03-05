@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  5 MAR 2021 14:21
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  5 MAR 2021 15:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1355,14 +1355,19 @@ LaTeX Font Info:    Font shape `U/msb/m/n' will be
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
 (Font)              scaled to size 5.21004pt on input line 31.
 
-Overfull \hbox (23.84502pt too wide) in paragraph at lines 49--52
-[]\T1/ppl/m/n/9 (-20) DIscuss ad-van-tages and dis-ad-van-tages de-scribed in [
+Overfull \hbox (32.82314pt too wide) in paragraph at lines 47--49
+|   []   |   []   |   []   |   [] 
+ []
+
+
+Overfull \hbox (23.43921pt too wide) in paragraph at lines 49--52
+[]\T1/ppl/m/n/9 (-20) Discuss ad-van-tages and dis-ad-van-tages de-scribed in [
 ][]$\T1/zi4/m/n/9 https : / / christophm . github . io / interpretable -[]
  []
 
 LaTeX Font Info:    Font shape `T1/ppl/bx/n' in size <12> not available
-(Font)              Font shape `T1/ppl/b/n' tried instead on input line 57.
-LaTeX Font Info:    Try loading font information for U+fplmbb on input line 72.
+(Font)              Font shape `T1/ppl/b/n' tried instead on input line 58.
+LaTeX Font Info:    Try loading font information for U+fplmbb on input line 73.
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/psnfss/ufplmbb.fd
 File: ufplmbb.fd 2003/10/30 Fontinst v1.914 font definitions for U/fplmbb.
@@ -1370,120 +1375,120 @@ File: ufplmbb.fd 2003/10/30 Fontinst v1.914 font definitions for U/fplmbb.
 
 ]
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 10.42007pt on input line 164.
+(Font)              scaled to size 10.42007pt on input line 165.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 7.91925pt on input line 164.
+(Font)              scaled to size 7.91925pt on input line 165.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 6.25204pt on input line 164.
+(Font)              scaled to size 6.25204pt on input line 165.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 10.42007pt on input line 164.
+(Font)              scaled to size 10.42007pt on input line 165.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 7.91925pt on input line 164.
+(Font)              scaled to size 7.91925pt on input line 165.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 6.25204pt on input line 164.
+(Font)              scaled to size 6.25204pt on input line 165.
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 198.
+(hyperref)                removing `math shift' on input line 199.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 198.
+(hyperref)                removing `math shift' on input line 199.
 
 [2]
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 8.33606pt on input line 253.
+(Font)              scaled to size 8.33606pt on input line 254.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 8.33606pt on input line 253.
+(Font)              scaled to size 8.33606pt on input line 254.
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 284.
+put line 285.
 [3]
 
-Package natbib Warning: Citation `R-R6' on page 4 undefined on input line 364.
+Package natbib Warning: Citation `R-R6' on page 4 undefined on input line 365.
 
 
 Package natbib Warning: Citation `R-reticulate' on page 4 undefined on input li
-ne 373.
+ne 374.
 
 [4pdfTeX warning (ext4): destination with the same identifier (name{equation.2.
 2.3}) has been already used, duplicate ignored
 
 \@EveryShipout@Output ...@Org@Shipout \box \@cclv 
                                                   
-l.377 
+l.378 
       ]
 
 Package natbib Warning: Citation `eronika-2017-catboost' on page 5 undefined on
- input line 395.
+ input line 396.
 
 
 Package natbib Warning: Citation `R-SHAPforxgboost' on page 5 undefined on inpu
-t line 397.
+t line 398.
 
-LaTeX Font Info:    Try loading font information for T1+phv on input line 438.
+LaTeX Font Info:    Try loading font information for T1+phv on input line 439.
 (/usr/local/texlive/2017/texmf-dist/tex/latex/psnfss/t1phv.fd
 File: t1phv.fd 2001/06/04 scalable font definitions for T1/phv.
 )
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
-(Font)              scaled to size 8.27998pt on input line 438.
+(Font)              scaled to size 8.27998pt on input line 439.
 Package microtype Info: Loading generic settings for font family
 (microtype)             `phv' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 
 Package natbib Warning: Citation `R-readxl' on page 5 undefined on input line 4
-39.
+40.
 
 [5] [6]
-<greenwell_files/figure-latex/ex-credit-gbm-1.pdf, id=253, 404.51125pt x 191.71
+<greenwell_files/figure-latex/ex-credit-gbm-1.pdf, id=252, 404.51125pt x 191.71
 625pt>
 File: greenwell_files/figure-latex/ex-credit-gbm-1.pdf Graphic file (type pdf)
 <use greenwell_files/figure-latex/ex-credit-gbm-1.pdf>
 Package pdftex.def Info: greenwell_files/figure-latex/ex-credit-gbm-1.pdf used 
-on input line 562.
+on input line 563.
 (pdftex.def)             Requested size: 398.33858pt x 188.79333pt.
-LaTeX Font Info:    Try loading font information for TS1+zi4 on input line 589.
+LaTeX Font Info:    Try loading font information for TS1+zi4 on input line 590.
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/inconsolata/ts1zi4.fd
 File: ts1zi4.fd 2016/12/29 TS1/zi4 (Inconsolata)
 )
 LaTeX Font Info:    Font shape `TS1/zi4/m/n' will be
-(Font)              scaled to size 9.18004pt on input line 589.
+(Font)              scaled to size 9.18004pt on input line 590.
 Package microtype Info: Loading generic settings for font family
 (microtype)             `zi4' (encoding: TS1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 [7 <./greenwell_files/figure-latex/ex-credit-gbm-1.pdf>]
 <greenwell_files/figure-latex/ex-credit-gbm-predict-extreme-explain-plot-1.pdf,
- id=269, 410.53375pt x 257.96375pt>
+ id=268, 410.53375pt x 257.96375pt>
 File: greenwell_files/figure-latex/ex-credit-gbm-predict-extreme-explain-plot-1
 .pdf Graphic file (type pdf)
 
 <use greenwell_files/figure-latex/ex-credit-gbm-predict-extreme-explain-plot-1.
 pdf>
 Package pdftex.def Info: greenwell_files/figure-latex/ex-credit-gbm-predict-ext
-reme-explain-plot-1.pdf used on input line 659.
+reme-explain-plot-1.pdf used on input line 660.
 (pdftex.def)             Requested size: 398.33858pt x 250.2993pt.
 
 Package natbib Warning: Citation `R-sparklyr' on page 8 undefined on input line
- 678.
+ 679.
 
 [8] [9 <./greenwell_files/figure-latex/ex-credit-gbm-predict-extreme-explain-pl
 ot-1.pdf>] [10]
-<greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1.pdf, id=337, 410.5337
+<greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1.pdf, id=336, 410.5337
 5pt x 258.9675pt>
 File: greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1.pdf Graphic file
  (type pdf)
 <use greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1.pdf>
 Package pdftex.def Info: greenwell_files/figure-latex/ex-ames-fastshap-autoplot
--1.pdf used on input line 884.
+-1.pdf used on input line 896.
 (pdftex.def)             Requested size: 398.33858pt x 251.27322pt.
-[11 <./greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1.pdf>]
 
-Package natbib Warning: Citation `R-pdp' on page 12 undefined on input line 905
+Package natbib Warning: Citation `R-pdp' on page 11 undefined on input line 917
 .
 
+[11]
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 8.16003pt on input line 963.
+(Font)              scaled to size 8.16003pt on input line 975.
 Package microtype Info: Character `textendash ' is missing
 (microtype)             in font `T1/zi4/m/n/8'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1491,10 +1496,10 @@ Package microtype Info: Character `textemdash ' is missing
 (microtype)             in font `T1/zi4/m/n/8'.
 (microtype)             Ignoring protrusion settings for this character.
 
-LaTeX Warning: Reference `sec:KernelSHAP' on page 12 undefined on input line 96
-4.
+LaTeX Warning: Reference `sec:KernelSHAP' on page 12 undefined on input line 97
+6.
 
-[12]
+[12 <./greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1.pdf>]
 Package microtype Info: Loading generic settings for font family
 (microtype)             `cmtt' (encoding: OT1).
 (microtype)             For optimal results, create family-specific settings.
@@ -1506,7 +1511,7 @@ File: greenwell_files/figure-latex/ex-boston-mars-SampleSHAP-1.pdf Graphic file
  (type pdf)
 <use greenwell_files/figure-latex/ex-boston-mars-SampleSHAP-1.pdf>
 Package pdftex.def Info: greenwell_files/figure-latex/ex-boston-mars-SampleSHAP
--1.pdf used on input line 1057.
+-1.pdf used on input line 1069.
 (pdftex.def)             Requested size: 398.33858pt x 190.69482pt.
 [13] [14 <./greenwell_files/figure-latex/ex-boston-mars-SampleSHAP-1.pdf>]
 <greenwell_files/figure-latex/titanic-jack-explanations-plot-1.pdf, id=411, 623
@@ -1515,7 +1520,7 @@ File: greenwell_files/figure-latex/titanic-jack-explanations-plot-1.pdf Graphic
  file (type pdf)
 <use greenwell_files/figure-latex/titanic-jack-explanations-plot-1.pdf>
 Package pdftex.def Info: greenwell_files/figure-latex/titanic-jack-explanations
--plot-1.pdf used on input line 1198.
+-plot-1.pdf used on input line 1210.
 (pdftex.def)             Requested size: 398.33858pt x 251.4477pt.
 [15]
 <greenwell_files/figure-latex/titanic-benchmark-1.pdf, id=418, 404.51125pt x 19
@@ -1524,7 +1529,7 @@ File: greenwell_files/figure-latex/titanic-benchmark-1.pdf Graphic file (type p
 df)
 <use greenwell_files/figure-latex/titanic-benchmark-1.pdf>
 Package pdftex.def Info: greenwell_files/figure-latex/titanic-benchmark-1.pdf u
-sed on input line 1256.
+sed on input line 1268.
 (pdftex.def)             Requested size: 398.33858pt x 191.75867pt.
 [16 <./greenwell_files/figure-latex/titanic-jack-explanations-plot-1.pdf>] (./R
 Jwrapper.bbl (./RJwrapper.brf)
@@ -1534,15 +1539,15 @@ Jwrapper.bbl (./RJwrapper.brf)
 [17 <./greenwell_files/figure-latex/titanic-benchmark-1.pdf>] [18])
 
 LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
-(Font)              using `T1/zi4/m/n' instead on input line 1327.
+(Font)              using `T1/zi4/m/n' instead on input line 1339.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1327--1328
+Underfull \hbox (badness 10000) in paragraph at lines 1339--1340
 
  []
 
 LaTeX Font Info:    Font shape `T1/zi4/m/it' will be
-(Font)              scaled to size 9.18004pt on input line 1338.
+(Font)              scaled to size 9.18004pt on input line 1350.
 Package microtype Info: Character `textendash ' is missing
 (microtype)             in font `T1/zi4/m/it/9'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1550,7 +1555,7 @@ Package microtype Info: Character `textemdash ' is missing
 (microtype)             in font `T1/zi4/m/it/9'.
 (microtype)             Ignoring protrusion settings for this character.
 )
-Underfull \hbox (badness 10000) in paragraph at lines 1338--32
+Underfull \hbox (badness 10000) in paragraph at lines 1350--32
 
  []
 
@@ -1566,7 +1571,7 @@ Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 34.
 Package rerunfilecheck Info: File `RJwrapper.out' has not changed.
 (rerunfilecheck)             Checksum: 924CC87521C9C6C64ED428688A23832F;1271.
 Package rerunfilecheck Info: File `RJwrapper.brf' has not changed.
-(rerunfilecheck)             Checksum: DD9CEBAEC8FC42B6CAA20429E0B36C57;3113.
+(rerunfilecheck)             Checksum: 83CA65B3BFC93F817B5BF2E51A270ED6;3111.
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
@@ -1576,11 +1581,11 @@ LaTeX Warning: There were undefined references.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 34.
  ) 
 Here is how much of TeX's memory you used:
- 22917 strings out of 492995
- 409182 string characters out of 6132704
- 509266 words of memory out of 5000000
+ 22915 strings out of 492995
+ 409172 string characters out of 6132704
+ 508266 words of memory out of 5000000
  25598 multiletter control sequences out of 15000+600000
- 86351 words of font info for 335 fonts, out of 8000000 for 9000
+ 86192 words of font info for 333 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  62i,17n,94p,706b,727s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): name{Hfootnote.5} has been referenced but does not exi
@@ -1617,10 +1622,10 @@ type1/urw/palatino/uplbi8a.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/
 urw/palatino/uplr8a.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/urw/pal
 atino/uplr8a.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/urw/palatino/u
 plri8a.pfb>
-Output written on RJwrapper.pdf (19 pages, 519965 bytes).
+Output written on RJwrapper.pdf (19 pages, 522445 bytes).
 PDF statistics:
  622 PDF objects out of 1000 (max. 8388607)
  561 compressed objects within 6 object streams
- 99 named destinations out of 1000 (max. 500000)
+ 100 named destinations out of 1000 (max. 500000)
  60059 words of extra memory for PDF output out of 61914 (max. 10000000)
 

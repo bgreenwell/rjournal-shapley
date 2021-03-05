@@ -54,11 +54,11 @@ If you notice a major issue, or have suggestions, feel free to contribute!
 * Discuss SHAP as a unification of Shapley, LIME, etc.
 * Find a good place to talk about "true to the model" versus "true to the data": https://arxiv.org/pdf/2006.16234.pdf (I think this is important for motivating the SampleSHAP approximation, which relies on randomly permuting instance values.) Some remarks on causality here are probably also warranted.
 * Fill out KernelSHAP section.
-* Find motivating example for **iml** package; maybe credit card default risk?
-* Find motivating example for **fastshap** package; maybe Ames housing?
-* Find motivating example of interfacing with **shap** via **reticulate**. Can probably lift from the **fastshap** vignette here: https://bgreenwell.github.io/fastshap/articles/fastshap-vs-shap.html.
-* DIscuss advantages and disadvantages described in \url{https://christophm.github.io/interpretable-ml-book/shapley.html}.
-* Mention the technical difference between SHAP (which satisfies the consistency property) and Shapley values, and how we loosen the distinction of the terminology here.
+* ~~Find motivating example for **iml** package; maybe credit card default risk?~~
+* ~~Find motivating example for **fastshap** package; maybe Ames housing?~~
+* ~~Find motivating example of interfacing with **shap** via **reticulate**. Can probably lift from the **fastshap** vignette here: https://bgreenwell.github.io/fastshap/articles/fastshap-vs-shap.html.~~
+* Discuss advantages and disadvantages described in \url{https://christophm.github.io/interpretable-ml-book/shapley.html}.
+* Mention the technical difference between SHAP (which satisfies the consistency property) and traditional Shapley values (like SampleSHAP), and how we loosen the distinction of the terminology here.
 
 
 <!-- ----------------------------------------------------------------------- -->
@@ -258,7 +258,7 @@ Package \CRANpkg{iBreakDown} implements a general approach to explaining the pre
 
 \CRANpkg{shapper} provides an R interface to the Python \pkg{shap} library using \CRANpkg{reticulate} \citep{R-reticulate}; however, it currently only supports KernelSHAP (\pkg{shap} itself supports SampleSHAP, TreeSHAP, LinearSHAP, as well as various other model-specific Shapley explanation methods).
 
-I'm also aware of two experimental packages supporting Shapley explanations that are not currently on CRAN: \pkg{shapr} \citep{R-sellereite} and \pkg{shapFlex} \citep{R-shapFlex}. As previously discussed, one drawback of traditional Shapley values is the assumption of independent features (an assumption made by many IML procedures, in fact). To that end, the \pkg{shapr} package implements Shapley explanations that can account for the dependence between features \citep{aas-2019-explaining}, resulting in significantly more accurate approximations to the Shapley values. The package also includes an implementation of KernelSHAP that's consistent with the \pkg{shap} package for Python. The \pkg{shapFlex} package, short for Shapley flexibility, provides approximate Shapley values that incorporate causal constraints into the model's feature space, as described in \citet{frye-2019-asymmetric}.
+We're also aware of two experimental packages supporting Shapley explanations that are not currently on CRAN: \pkg{shapr} \citep{R-sellereite} and \pkg{shapFlex} \citep{R-shapFlex}. As previously discussed, one drawback of traditional Shapley values is the assumption of independent features (an assumption made by many IML procedures, in fact). To that end, the \pkg{shapr} package implements Shapley explanations that can account for the dependence between features \citep{aas-2019-explaining}, resulting in significantly more accurate approximations to the Shapley values. The package also includes an implementation of KernelSHAP that's consistent with the \pkg{shap} package for Python. The \pkg{shapFlex} package, short for Shapley flexibility, provides approximate Shapley values that incorporate causal constraints into the model's feature space, as described in \citet{frye-2019-asymmetric}.
 
 TreeSHAP has been directly incorporated into most implementations of XGBoost \citep{chen-2016-xgboost} (including \CRANpkg{xgboost} \citep{R-xgboost}), CatBoost \citep{eronika-2017-catboost}, and LightGBM \citep{ke-2017-lightgbm}. Both \CRANpkg{fastshap} \citep{R-fastshap} and \CRANpkg{SHAPforxgboost} \citep{R-SHAPforxgboost} provide an interface to \pkg{xgboost}'s TreeSHAP implementation.
 
@@ -476,9 +476,14 @@ head(ex.all)  # peak at results
 
 As discussed in \citet{lundberg-2020-treeshap}, the individual feature contributions can be used to obtain a global understanding of a particular model (e.g., feature importance and feature effect plots).
 
-A valuable way to summarize the feature contributions from a set of data is to aggregate them into an overall Shapley-based variable importance metric \citep{lundberg-2020-treeshap}. You can compute the Shapley-based variable importance of a particular feature as the sum of the absolute values of the individual contributions across all rows; see Figure \ref{fig:ex-ames-fastshap-autoplot} (left) for an example on the Ames housing data. Here you can see that \code{Gr\_Liv\_Area} and \code{Overall\_Qual} (the overall quality rating of the property) are the most important features  in terms of their impact on, or contribution to, predicted sale price.
+A valuable way to summarize the feature contributions from a set of data is to aggregate them into an overall Shapley-based variable importance metric \citep{lundberg-2020-treeshap}. The Shapley-based variable importance of the $i$-th feature $x_i$$ is computed as the mean absolute Shapley value:
+\begin{equation}
+\nonumber
+  VI\left(x_i\right) = \frac{1}{N}\sum_{j = 1}^N \left\lvert\phi_{ij}\right\rvert,
+\end{equation}
+where $\phi_{ij}$ is the contribution of the $j$-th value of $x_i$; see Figure \ref{fig:ex-ames-fastshap-autoplot} (left) for an example on the Ames housing data. Here you can see that \code{Gr\_Liv\_Area} and \code{Overall\_Qual} (the overall quality rating of the property) are the most important features  in terms of their impact on, or contribution to, predicted sale price.
 
-Shapley-based dependence plots \citep{lundberg-2020-treeshap} show how a feature's value ($x$-axis) impacts the predicted outcome ($y$-axis). In Figure \ref{fig:ex-ames-fastshap-autoplot} (right) we show the dependence of \code{Gr\_Liv\_Area} (above ground square footage) on the predicted sale price for the Ames housing data. For additional insight, you can color these plots by any other feature (which can help understand potential interaction effects); for illustration, we used \code{Central\_Air} (whether or not central air is available) to color the individual points. Here you can see that \code{Gr\_Liv\_Area} has a roughly monotonic increasing relationship with predicted sale price, as you might expect.
+Shapley-based dependence plots \citep{lundberg-2020-treeshap} show how a feature's value ($x$-axis) impacts the predicted outcome ($y$-axis); this is nothing more than a simple scatterplot of the points $\left\{x_{ij}, \phi_{ij}\right\}_{i = 1}^N$, where $x_{ij}$ is the $j$-th value of the $i$-th feature, and $\phi_{ij}$ is it's corresponding contribution to the predicted outcome. Compared to the more traditional partial dependence plots, which are based on averaged predictions, Shapley-based dependence plots show dispersion in the $y$-axis direction (similar to ICE curves) which can be indicative of potential interaction effects. In Figure \ref{fig:ex-ames-fastshap-autoplot} (right) we show the dependence of \code{Gr\_Liv\_Area} (above ground square footage) on the predicted sale price for the Ames housing data. For additional insight, you can color these plots by any other feature (which can help understand potential interaction effects); for illustration, we used \code{Central\_Air} (whether or not central air is available) to color the individual points. Here you can see that \code{Gr\_Liv\_Area} has a roughly monotonic increasing relationship with predicted sale price, as you might expect.
 
 ```{r load-fastshap, echo=FALSE}
 library(fastshap)

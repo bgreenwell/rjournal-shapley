@@ -35,23 +35,24 @@ to contribute!
 \item
   Fill out KernelSHAP section.
 \item
-  Find motivating example for \textbf{iml} package; maybe credit card
-  default risk?
+  \sout{Find motivating example for \textbf{iml} package; maybe credit
+  card default risk?}
 \item
-  Find motivating example for \textbf{fastshap} package; maybe Ames
-  housing?
+  \sout{Find motivating example for \textbf{fastshap} package; maybe
+  Ames housing?}
 \item
-  Find motivating example of interfacing with \textbf{shap} via
+  \sout{Find motivating example of interfacing with \textbf{shap} via
   \textbf{reticulate}. Can probably lift from the \textbf{fastshap}
   vignette here:
-  \url{https://bgreenwell.github.io/fastshap/articles/fastshap-vs-shap.html}.
+  \url{https://bgreenwell.github.io/fastshap/articles/fastshap-vs-shap.html}.}
 \item
-  DIscuss advantages and disadvantages described in
+  Discuss advantages and disadvantages described in
   \url{https://christophm.github.io/interpretable-ml-book/shapley.html}.
 \item
   Mention the technical difference between SHAP (which satisfies the
-  consistency property) and Shapley values, and how we loosen the
-  distinction of the terminology here.
+  consistency property) and traditional Shapley values (like
+  SampleSHAP), and how we loosen the distinction of the terminology
+  here.
 \end{itemize}
 
 \section{Background}
@@ -375,7 +376,7 @@ currently only supports KernelSHAP (\pkg{shap} itself supports
 SampleSHAP, TreeSHAP, LinearSHAP, as well as various other
 model-specific Shapley explanation methods).
 
-I'm also aware of two experimental packages supporting Shapley
+We're also aware of two experimental packages supporting Shapley
 explanations that are not currently on CRAN: \pkg{shapr}
 \citep{R-sellereite} and \pkg{shapFlex} \citep{R-shapFlex}. As
 previously discussed, one drawback of traditional Shapley values is the
@@ -847,26 +848,37 @@ particular model (e.g., feature importance and feature effect plots).
 
 A valuable way to summarize the feature contributions from a set of data
 is to aggregate them into an overall Shapley-based variable importance
-metric \citep{lundberg-2020-treeshap}. You can compute the Shapley-based
-variable importance of a particular feature as the sum of the absolute
-values of the individual contributions across all rows; see Figure
-\ref{fig:ex-ames-fastshap-autoplot} (left) for an example on the Ames
-housing data. Here you can see that \code{Gr\_Liv\_Area} and
-\code{Overall\_Qual} (the overall quality rating of the property) are
-the most important features in terms of their impact on, or contribution
-to, predicted sale price.
+metric \citep{lundberg-2020-treeshap}. The Shapley-based variable
+importance of the \(i\)-th feature \(x_i\)\$ is computed as the mean
+absolute Shapley value: \begin{equation}
+\nonumber
+  VI\left(x_i\right) = \frac{1}{N}\sum_{j = 1}^N \left\lvert\phi_{ij}\right\rvert,
+\end{equation} where \(\phi_{ij}\) is the contribution of the \(j\)-th
+value of \(x_i\); see Figure \ref{fig:ex-ames-fastshap-autoplot} (left)
+for an example on the Ames housing data. Here you can see that
+\code{Gr\_Liv\_Area} and \code{Overall\_Qual} (the overall quality
+rating of the property) are the most important features in terms of
+their impact on, or contribution to, predicted sale price.
 
 Shapley-based dependence plots \citep{lundberg-2020-treeshap} show how a
-feature's value (\(x\)-axis) impacts the predicted outcome (\(y\)-axis).
-In Figure \ref{fig:ex-ames-fastshap-autoplot} (right) we show the
-dependence of \code{Gr\_Liv\_Area} (above ground square footage) on the
-predicted sale price for the Ames housing data. For additional insight,
-you can color these plots by any other feature (which can help
-understand potential interaction effects); for illustration, we used
-\code{Central\_Air} (whether or not central air is available) to color
-the individual points. Here you can see that \code{Gr\_Liv\_Area} has a
-roughly monotonic increasing relationship with predicted sale price, as
-you might expect.
+feature's value (\(x\)-axis) impacts the predicted outcome (\(y\)-axis);
+this is nothing more than a simple scatterplot of the points
+\(\left\{x_{ij}, \phi_{ij}\right\}_{i = 1}^N\), where \(x_{ij}\) is the
+\(j\)-th value of the \(i\)-th feature, and \(\phi_{ij}\) is it's
+corresponding contribution to the predicted outcome. Compared to the
+more traditional partial dependence plots, which are based on averaged
+predictions, Shapley-based dependence plots show dispersion in the
+\(y\)-axis direction (similar to ICE curves) which can be indicative of
+potential interaction effects. In Figure
+\ref{fig:ex-ames-fastshap-autoplot} (right) we show the dependence of
+\code{Gr\_Liv\_Area} (above ground square footage) on the predicted sale
+price for the Ames housing data. For additional insight, you can color
+these plots by any other feature (which can help understand potential
+interaction effects); for illustration, we used \code{Central\_Air}
+(whether or not central air is available) to color the individual
+points. Here you can see that \code{Gr\_Liv\_Area} has a roughly
+monotonic increasing relationship with predicted sale price, as you
+might expect.
 
 \begin{Schunk}
 \begin{Sinput}
