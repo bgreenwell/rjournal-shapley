@@ -10,7 +10,7 @@ X <- subset(boston, select = -cmedv)  # feature columns only
                       nfold = 5, ncross = 10))
 
 # Prediction wrapper for use with `shap$KernelExplainer()`
-pfun <- function(newdata) {  # Note: only a function of newdata!
+pfun.ks <- function(newdata) {  # Note: only a function of newdata!
   predict(mars, newdata = newdata)  
 }  # returns an `nrow(newdata)` x 1 matrix of predictions
 
@@ -18,7 +18,7 @@ library(reticulate)
 
 # Import {shap} and run KernelSHAP algorithm with 100 repetitions
 shap <- import("shap")
-explainer <- shap$KernelExplainer(pfun, data = X)  # initialize explainer
+explainer <- shap$KernelExplainer(pfun.ks, data = X)  # initialize explainer
 system.time({  # time KernelSHAP
   ex.ks <- explainer$shap_values(X, nsamples = 100L)
 })
@@ -30,13 +30,13 @@ colnames(ex.ks) <- colnames(X)  # add column names
 saveRDS(ex.ks, file = "data/ex_ks.rds")
 
 # Run SampleSHAP algorithm with 100 repetitions
-pfun <- function(object, newdata) {
+pfun.ss <- function(object, newdata) {
   predict(object, newdata = newdata)[, 1L, drop = TRUE]
 }  # `fastshap::explain()` requires a vector of predictions
 set.seed(1503)  # for reproducibility
 system.time({  # time SampleSHAP
-  ex.ss <- explain(boston.mars, X = X, pred_wrapper = pfun,
-                   nsim = 100)
+  ex.ss <- fastshap::explain(boston.mars, X = X, pred_wrapper = pfun.ss,
+                             nsim = 100)
 })
 #   user  system elapsed 
 # 14.055   0.581  14.628 
