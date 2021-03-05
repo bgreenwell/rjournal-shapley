@@ -158,7 +158,7 @@ In the following sections, we'll discuss several popular ways to compute Shapley
 
 **FIXME:** Clear up notation (e.g., $S^c$ or $x_{S^c}$?)
 
-The challenge of using Shapley values for the purpose of explaining predictions is in defining the functional form of $v$. As discussed in \citet{chen-2020-true}, there are several ways to do this. However, since we are primarily interested in understanding how much each feature contributed to a particular prediction, $v$ is typically related to the conditional expectation of the model's prediction. \citet{chen-2020-true} make the distinction between two possibilities, each of which differs in their conditioning argument. The Shapley value implementations discussed in this paper rely on what \citet{chen-2020-true} call the \dfn{interventional conditional expectation}, which can be expressed using \citeauthor{pearl-2009-causality}'s \citeyearpar{pearl-2009-causality} $do\left(\cdot\right)$ operator:
+The challenge of using Shapley values for the purpose of explaining predictions is in defining the functional form of $v$. As discussed in \citet{chen-2020-true}, there are several ways to do this. However, since we are primarily interested in understanding how much each feature contributed to a particular prediction, $v$ is typically related to a conditional expectation of the model's prediction. \citet{chen-2020-true} make the distinction between two possibilities, each of which differs in their conditioning argument. The Shapley value implementations discussed in this paper (e.g., KernelSHAP and TreeSHAP) rely on what \citet{chen-2020-true} call the \dfn{interventional conditional expectation}, which can be expressed using \citeauthor{pearl-2009-causality}'s \citeyearpar{pearl-2009-causality} $do\left(\cdot\right)$ operator:
 \begin{equation}
 \label{eqn:ice}
 \begin{split}
@@ -166,7 +166,7 @@ The challenge of using Shapley values for the purpose of explaining predictions 
                   &= \int f\left(x_S, x_{S^c}\right) p\left(x_{S^c}\right) d x_{S^c},
 \end{split}
 \end{equation}
-where $S^c$ is the complement $S$, $x_S$ and $x_{S^c}$ are the set of features in $S$ and $S^c$, respectively, and $p\left(x_{S^c}\right)$ is the joint probability density of $x_{S^c}$. Equation \eqref{eqn:ice} can be interpreted as the expected value of $f\left(x\right)$ given some intervention on the features in $S$, which assumes independence between $x_S$ and $x_{S^c}$. Shapley values based on this formulation of $v$ are referred to as \dfn{interventional Shapley values} \citep{chen-2020-true}. The various Shapley value algorithms discussed over the next several sections fall under this form.
+where $S^c$ is the complement $S$, $x_S$ and $x_{S^c}$ are the set of features in $S$ and $S^c$, respectively, and $p\left(x_{S^c}\right)$ is the joint probability density of $x_{S^c}$. Equation \eqref{eqn:ice} can be interpreted as the expected value of $f\left(x\right)$ given some intervention on the features in $S$, which assumes independence between $x_S$ and $x_{S^c}$; a similar assumption is also used in the construction of \dfn{partial dependence plots} \citep{friedman-2001-greedy}, with the connection to \citeauthor{pearl-2009-causality}'s \citeyearpar{pearl-2009-causality} $do\left(\cdot\right)$ operator established in \citet{zhao-2021-causal}. Shapley values based on this formulation of $v$ are referred to as \dfn{interventional Shapley values} \citep{chen-2020-true}. The various Shapley value algorithms discussed over the next several sections fall under this form.
 
 
 <!-- ----------------------------------------------------------------------- -->
@@ -228,6 +228,8 @@ Recall that the contribution of the $i$-th feature to the prediction $f\left(X\r
 \end{split},
 \end{equation}
 where we estimate $\E\left(X_i\right)$ with the corresponding sample mean $\bar{X}_i$. The quantity $\phi_i\left(X\right)$ is also referred to as the \emph{situational importance of $X_i$} \citep{achen-1982-interpreting}.
+
+Note that if you're using R, then $\beta_i \left(X_i - \E\left(X_i\right)\right)$  is exactly what's returned by R's \code{predict()} method when applied to \code{lm/glm} models, provided you specify \code{type = "terms"}; see \code{?predict.lm} for details and Section \ref{sec:benchmark} for an example with a logistic regression model.
 
 
 <!-- ----------------------------------------------------------------------- -->
@@ -342,34 +344,60 @@ credit.tst <- credit[-ids, ]  # test
 head(credit.trn)
 ```
 
-For modelling, we'll fig a gradient boosted tree ensemble (GBM) using the \CRANpkg{R-gbm} package (originally by Greg Ridgeway). While more efficient  and scalable GBM implementations certainly exist in R (e.g., \pkg{xgboost} and \pkg{lightgbm}), they don't often support categorical features without having to re-encode them numerically.
+For modeling, we'll fig a gradient boosted tree ensemble (GBM) using the \CRANpkg{R-gbm} package (originally by Greg Ridgeway). While more efficient  and scalable GBM implementations certainly exist in R (e.g., \pkg{xgboost} and \pkg{lightgbm}), they don't often support categorical features without having to re-encode them numerically.
 
 ```{r ex-credit-gbm, fig.cap="5-fold cross-validation performance as a function of the number of trees from the GBM model applied to the credit default data set."}
 library(gbm)
 
+# gbm required the target to be coded as 0/1
+credit.trn$default <- ifelse(credit.trn$default == "yes", 1, 0)
+
 # Fit a GBM to the credit default training set
 set.seed(1554)  # for reproducibility
-gbm.trn <- gbm(ifelse(credit.trn$default == "yes", 1, 0) ~ ., data = credit.trn, 
-               distribution = "bernoulli", n.trees = 300, interaction.depth = 5, 
-               shrinkage = 0.1, cv.folds = 5)
+bst <- gbm(default ~ ., data = credit.trn, distribution = "bernoulli", 
+           n.trees = 300, interaction.depth = 5, shrinkage = 0.1, cv.folds = 5)
+
+# Plot results and print optimal number of trees
 par(las = 1)  # horizontal y-axis labels
-(best <- gbm.perf(gbm.trn, plot.it = TRUE, method = "cv"))
+(best <- gbm.perf(bst, plot.it = TRUE, method = "cv"))
 ```
 
-Finish later...
+To use the \pkg{iml} package with out \pkg{gbm} model, we need to create a \code{Predictor} object; that is, a special object used by the functions in the \pkg{iml} package that holds the fitted machine learning model as well as any required metadata (e.g., the training data and a prediction wrapper so that \pkg{iml} knows how to obtain new predictions from your model). Below we construct a \code{Predictor} object for the previously fit \pkg{gbm} model. (Note that the prediction wrapper, \code{pfun()}, returns predictions on the logit scale.)
 
-```{r ex-credit-gbm-predict, fig.cap="TBD."}
-p <- predict(gbm.trn, newdata = credit.tst, n.trees = "best")
-max(p)
+```{r ex-credit-gbm-predict}
+# Prediction wrapper
 pfun <- function(object, newdata) {
-  predict(object, newdata = newdata, n.trees = "best")
+  predict(object, newdata = newdata, n.trees = best)
 }
-predictor <- iml::Predictor$new(gbm.trn, data = credit.trn, y = "default",
+
+# Construct a `Predictor` object
+predictor <- iml::Predictor$new(bst, data = credit.trn, y = "default",
                                 predict.fun = pfun)
+```
+
+```{r ex-credit-gbm-predict-extreme, echo=FALSE}
+p <- pfun(bst, newdata = credit.tst)
+```
+
+We can now compute Shapley values for any observation (e.g., instances from the training set or a new instance). Here, we'll compute  the feature contributions for the most extreme prediction in the test set. In this case, the maximum prediction (on the logit scale) is ``r round(max(p), digits = 3)`` corresponds to an estimated probability of roughly ``r round(boot::inv.logit(max(p)), digits = 3)``.
+
+```{r ex-credit-gbm-predict-extreme-explain}
+# Compute test set predictions
+max(p <- pfun(bst, newdata = credit.tst))
+
+# Compute approximate Shapley values for the most extreme prediction
 set.seed(2241)  # for reproducibility
-ex <- iml::Shapley$new(predictor, x.interest = credit.tst[which.max(p), ], 
-                       sample.size = 100)
-plot(ex)
+(ex <- iml::Shapley$new(predictor, x.interest = credit.tst[which.max(p), ], 
+                        sample.size = 100))
+```
+
+The output provides lots of relevant information. The predicted value for this observation is roughly 2.639 (on the logit scale), which is nearly 4.136 more than the baseline or average training prediction of -1.497. We can also see the explanations for the first few features. The approximate Shapley values, based on $R = 100$ replications of Algorithm \ref{alg:SampleSHAP}, are given in the column labeled \code{phi}. The corresponding sample variance of each is given in column \code{phi.var}. In this example, we can see that \code{pay\_0=5} contributed roughly 1.259 to the 4.136 difference.
+
+It can often be useful to plot the feature contributions from a single explanation. With \pkg{iml}, you can just call the \code{plot()} method on the Shapley output:
+
+```{r ex-credit-gbm-predict-extreme-explain-plot, fig.cap="Approximate Shapley contributions for the most extreme prediction in the test set for the credit card default example. The predicted value for this observation is roughly 2.64 (on the logit scale), which is nearly 4.14 more than the baseline or average training prediction of -1.50. The three biggest contributers to this difference are \\code{pay\\_0}, \\code{bill\\_amt1}, and \\code{bill\\_amt3}, each of which had a positive contribution to the difference."}
+# Plot feature contributions
+plot(ex)  # Figure XYZ
 ```
 
 
@@ -381,7 +409,7 @@ plot(ex)
 
 Like many post-hoc interpretation techniques (e.g., PDPs and ICE curves), SampleSHAP can be made more efficient by generating all the data up front, and scoring it only once (or twice, in the case of SampleSHAP). For example, PDPs and ICE curves can be efficiently constructed with only a single call to a scoring function by generating all of the required data up front using a single cross-join operation (which can be done rather efficiently in SQL or Spark). The scored data can then be post-processed/aggregated and displayed as either a PDP or set of ICE curves. An example using Spark with \CRANpkg{sparklyr} \citet{R-sparklyr} can be found here: \url{https://github.com/bgreenwell/pdp/issues/97}.
 
-Fortunately, a similar trick can be exploited for SampleSHAP. Whether explaining a single instance using a large number of Monte Carlo repititions ($R$), or explaining a large number of instances with with $R = 1$, the basic idea is to generate all the required Frankenstein instances (Section \ref{sec:SampleSHAP}) $b_1$ and $b_2$ upfront, and stored in matrices $\boldsymbol{B}_1$ and $\boldsymbol{B}_2$, respectively. 
+Fortunately, a similar trick can be exploited for SampleSHAP. Whether explaining a single instance using a large number of Monte Carlo repetitions ($R$), or explaining a large number of instances with with $R = 1$, the basic idea is to generate all the required Frankenstein instances (Section \ref{sec:SampleSHAP}) $b_1$ and $b_2$ upfront, and stored in matrices $\boldsymbol{B}_1$ and $\boldsymbol{B}_2$, respectively. 
 
 For example, suppose we wanted to estimate the contribution of $x_i$ for each of the $N$ rows of the available training data $\boldsymbol{X}$ using a single Monte-Carlo repetition in Algorithm \ref{alg:SampleSHAP} (i.e., $R = 1$)\footnote{The same idea also extends to explaining new instances.}. To start, we can generate the $N$ random instances at once and store them in an $N \times p$ matrix $\boldsymbol{W}$. Rather generating $N$ random permutations $\mathcal{O}$, and constructing $b_1$ and $b_2$ one at a time, the \pkg{fastshap} package uses C++---via \CRANpkg{Rcpp} \citep{R-Rcpp}---to efficiently generate an $N \times p$ logical matrix $\boldsymbol{\mathcal{O}}$, where $\boldsymbol{\mathcal{O}}_{kl} = 1$ if feature $x_l$ appears before feature $x_i$ in the $k$-th permutation, and $0$ otherwise. This logical matrix can then be used to logically subset $\boldsymbol{X}$ and $\boldsymbol{W}$ to more efficiently construct $\boldsymbol{B}_1$ and $\boldsymbol{B}_2$ in a single swoop. The matrices (or data frames) can then be each scored once, and the difference taken, to generate a single replication of $\phi_i\left(x\right)$ for each row of $\boldsymbol{X}$.
 
@@ -400,6 +428,7 @@ For illustration, we'll use the Ames housing data \citep{ames-cock-2011} which a
 
 To start, we'll load the Ames housing data from the \CRANpkg{AmesHousing} package \citep{R-AmesHousing} and fit a (default) random forest to the entire data set using the highly efficient \CRANpkg{ranger} package \citep{R-ranger}.
 ```{r ex-ames-load}
+library(ggplot2)
 library(ranger)
 
 # Set ggplot2 theme
@@ -451,12 +480,11 @@ A valuable way to summarize the feature contributions from a set of data is to a
 
 Shapley-based dependence plots \citep{lundberg-2020-treeshap} show how a feature's value ($x$-axis) impacts the predicted outcome ($y$-axis). In Figure \ref{fig:ex-ames-fastshap-autoplot} (right) we show the dependence of \code{Gr\_Liv\_Area} (above ground square footage) on the predicted sale price for the Ames housing data. For additional insight, you can color these plots by any other feature (which can help understand potential interaction effects); for illustration, we used \code{Central\_Air} (whether or not central air is available) to color the individual points. Here you can see that \code{Gr\_Liv\_Area} has a roughly monotonic increasing relationship with predicted sale price, as you might expect.
 
+```{r load-fastshap, echo=FALSE}
+library(fastshap)
+```
+
 ```{r ex-ames-fastshap-autoplot, fig.cap="Global summary plots of the Ames housing random forest model. Left: Shapley-based variable importance plot. Right: Shapley-based dependence of predicted sale price on above ground square footage."}
-library(ggplot2)
-
-# Set ggplot2 theme
-theme_set(theme_bw())
-
 # Shapley summary plots (see Figure XYZ)
 p1 <- autoplot(ex.all, num_features = 20)
 p2 <- autoplot(ex.all, type = "dependence", feature = "Gr_Liv_Area", X = X,
@@ -469,7 +497,88 @@ gridExtra::grid.arrange(p1, p2, nrow = 1)
 
 
 <!-- ----------------------------------------------------------------------- -->
-\subsection{A simple benchmark comparison}
+\subsubsection{Example: Interfacing with \pkg{shap} via reticulate}
+<!-- ----------------------------------------------------------------------- -->
+
+While the \pkg{shapper} package provides a convenient (albeit currently limited) interface to Python's \pkg{shap package, we're going to use this example to illustrate how to interface directly with \pkg{shap} through \pkg{reticulate}.
+
+For illustration, we'll compute feature contributions from a \dfn{multivariate adaptive regression splines} (MARS) model \citep{friedman-1991-mars} applied to the well-known Boston housing data \citep{harrison-1978-hedonic}. MARS models can be fit using the \CRANpkg{earth} \citep{R-earth} and we'll use the corrected version of the Boston housing data available in the \CRANpkg{pdp} package \cite{R-pdp}; see \code{?pdp::boston} for column descriptions and the original source.
+
+To start, we'll load the data and fit a third degree MARS model (i.e., allowing for up to three-way interaction effects) using 5-fold cross-validation for pruning:
+
+```{r ex-boston-mars}
+library(earth)
+
+# Load the Boston housing data
+boston <- pdp::boston
+boston$chas <- as.integer(boston$chas) - 1  # coerce to 0/1
+X <- subset(boston, select = -cmedv)  # feature columns only
+
+# Fit a third degree MARS model using 5-fold cross-validation
+(boston.mars <- earth(cmedv ~ ., data = boston, degree = 3, pmethod = "cv",
+                      nfold = 5, ncross = 10))
+```
+
+The fitted model obtained a generalized $R^2$ (\code{GRSq}) of ``r round(boston.mars$grsq, digits = 3)``. Next, we'll compute feature contributions for each row in the training set using the KernelSHAP algorithm with $R = 100$ repetitions. Before proceeding, we need to define a special prediction wrapper that will work with the \pkg{shap} package. In this case, it's about as simple as it gets. In particular, when interfacing with \pkg{shap}, the prediction wrapper needs to be a function of \code{newdata} only, which means the fitted model object (in this case, \code{boston.mars}) needs to be supplied directly to the call to \code{predict()} inside the function. Further, the output from the prediction wrapper need to return a data frame or matrix (i.e., it needs to have a row and column dimension). Fortunately, \pkg{earth}'s predict method already returns the predictions in a matrix, so we don't need to do anything further here.
+
+```{r ex-boston-mars-predict}
+# Prediction wrapper for use with `shap$KernelExplainer()`
+pfun.shap <- function(newdata) {  # Note: only a function of newdata!
+  predict(boston.mars, newdata = newdata)  
+}  # returns an `nrow(newdata)` x 1 matrix of predictions
+```
+
+Next, we'll use \pkg{reticulate} to interface directly with the Python \pkg{shap} module^\footnote{You need to make sure that you have Python installed, as well as the \pkg{shap} package. If you need help setting up \pkg{reticulate}, see the vignette \code{vignette("calling\_python", package = "reticulate")}.} and use it to run KernelSHAP (Section \ref{sec:KernelSHAP}) on our fitted MARS model. We'll request SHAP values for the entire training set. For comparison, we'll time the expression using \code{system.time()}. For nicer printing, we convert the results to a tibble using the \CRANpkg{tibble} package \citep{R-tibble}. (Note that, as indicated, the following expression will take a few minutes to run.)
+
+```{r ex-boston-mars-KernelSHAP-code, eval=FALSE}
+library(reticulate)
+
+# Import {shap} and run KernelSHAP algorithm with 100 repetitions
+shap <- import("shap")
+explainer <- shap$KernelExplainer(pfun.shap, data = X)  # initialize explainer
+system.time({  # time KernelSHAP
+  ex.ks <- explainer$shap_values(X, nsamples = 100L)
+})
+ex.ks <- ex.ks[[1L]]  # results returned as a list
+colnames(ex.ks) <- colnames(X)  # add column names
+(ex.ks <- tibble::as_tibble(ex.ks))  # for nicer printing
+```
+```
+#>    user  system elapsed 
+#> 558.527  28.887 343.433
+```
+
+```{r ex-boston-mars-KernelSHAP-load, echo=FALSE}
+# Read in results
+ex.ks <- readRDS("data/ex_ks.rds")
+print(ex.ks)
+```
+
+To get an appreciation for the speed of \pkg{fastshap}'s implementation of SampleSHAP, let's use \code{fastshap::explain()} to compute SampleSHAP feature contributions for the entire training set using 100 Monte Carlo repetitions. The results are displayed in Figure \ref{fig:ex-boston-mars-SampleSHAP}, which shows the Shapley-based dependence of median home value (\code{cmedv}) on  percentage of lower status of the population (\code{lstat}) using 100 Monte-Carlo repetitions from KernelSHAP (left) and SampleSHAP (right). The results are nearly the same. We drew lines at the knot locations MARS used to build piecewise linear terms with the \code{lstat} predictor (you can see the know locations for each predictor using \code{coef(boston.mars)}). Notice how the relationship between the Shapley contribution to $\widehat{\mathtt{cmedv}}$ and \code{lstat} is relatively linear in between each knot location. In this case, the contribution of \code{lstat} to $\widehat{\mathtt{cmedv}}$ is relatively monotonically decreasing, and flattens out after around \code{lstat = 22.11}.
+
+```{r ex-boston-mars-SampleSHAP, fig.cap="Shapley-based dependence of percentage of lower status of the population (\\code{lstat}) on median home value (\\code{cmedv}) using 100 Monte-Carlo repetitions from KernelSHAP (left) and SampleSHAP (right)."} 
+pfun.fastshap <- function(object, newdata) {
+  predict(object, newdata = newdata)[, 1L, drop = TRUE]
+}  # `fastshap::explain()` requires an atomic vector of predictions
+set.seed(1503)  # for reproducibility
+system.time({
+  ex.ss <- fastshap::explain(boston.mars, X = X, pred_wrapper = pfun.fastshap,
+                             nsim = 100)
+})
+
+# Plot results
+par(mfrow = c(1, 2), las = 1)
+plot(X$lstat, ex.ks$lstat, col = adjustcolor(2, alpha.f = 0.6),
+     xlab = "lstat", ylab = "KernelSHAP")
+abline(v = c(0.713, 6.12, 22.11), lty = 2)
+plot(X$lstat, ex.ss$lstat, col = adjustcolor(4, alpha.f = 0.6),
+     xlab = "lstat", ylab = "SampleSHAP")
+abline(v = c(0.713, 6.12, 22.11), lty = 2)
+```
+
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection{A simple benchmark comparison \label{sec:benchmark}}
 <!-- ----------------------------------------------------------------------- -->
 
 This section provides a brief example comparing various implementations of Shapley values using [Kaggle’s Titanic: Machine Learning from Disaster competition](https://www.kaggle.com/c/titanic). While the true focus of the competition is to use machine learning to create a model that predicts which passengers survived the Titanic shipwreck, we’ll focus on explaining predictions from a simple logistic regression model.
@@ -547,12 +656,7 @@ ex3 <- fastshap::explain(fit, X = X, pred_wrapper = pfun, nsim = 100,
 ```
 
 Finally, we plot the resulting explanations. Note that both \pkg{fastshap} and \pkg{iBreakDown} plot the feature contributions in the original order, whereas \pkg{iml} plots them in descending order.
-```{r titanic-jack-explanations-plot, fig.width=9, fig.height=3, out.width="100%", fig.cap="TBD."}
-library(ggplot2)
-
-# Set ggplot2 theme
-theme_set(theme_bw())
-
+```{r titanic-jack-explanations-plot, fig.width=9, fig.height=3, out.width="100%", fig.cap="Feature contributions for the tianic example using three different implementations of SampleSHAP."}
 # Plot results (see Figure XYZ)
 p3 <- plot(ex1) + ggtitle("iBreakDown")
 p2 <- plot(ex2) + ggtitle("iml")

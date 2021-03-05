@@ -1,4 +1,10 @@
 base
+gbm
 ggplot2
 ranger
-gbm
+fastshap
+Formula
+plotrix
+TeachingDemos
+plotmo
+earth

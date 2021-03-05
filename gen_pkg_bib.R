@@ -19,6 +19,7 @@ for (f in files) {
 pkgs <- c(
   "AmesHousing",
   "doParallel",
+  "earth",
   "fastshap",
   "foreach",
   "gbm",
