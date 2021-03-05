@@ -128,7 +128,7 @@ Brandon, Alex, Brad   & \$5         & \$15         & \$10         \\
 Brandon, Brad, Alex   & \$17        & \$3          & \$10         \\ \midrule
 Shapley contribution: & \$9.50      & \$14.67      & \$5.83       \\ \bottomrule
 \end{tabular}
-\caption{Marginal contribution for each permutation of the players {Alex, Brad, Brandon} (i.e., the order in which they arrive). The Shapley contribution is the average marginal contribution across all permutations. (Notice how each row sums to the total bill of \$30.) \label{tab:bar}}
+\caption{Marginal contribution for each permutation of the players \{Alex, Brad, Brandon\} (i.e., the order in which they arrive). The Shapley contribution is the average marginal contribution across all permutations. (Notice how each row sums to the total bill of \$30.) \label{tab:bar}}
 \end{table}
 
 
@@ -423,6 +423,8 @@ Suppose instead we want to estimate the contribution of $x_i$ for a single insta
 <!-- ----------------------------------------------------------------------- -->
 \subsubsection{Example: Ames housing data}
 <!-- ----------------------------------------------------------------------- -->
+
+**FIXME:** Rerun with `exact = TRUE` and show how total across each is equal to the difference between prediction and baseline.
 
 For illustration, we'll use the Ames housing data \citep{ames-cock-2011} which are available in the \CRANpkg{AmesHousing} package \citep{R-AmesHousing}. These data describe the sale of individual residential properties in Ames, Iowa from 2006--2010. The data set contains 2930 observations, 80 features (23 nominal, 23 ordinal, 14 discrete, and 20 continuous), and a continuous target giving the sale price of the home (\code{Sale\_Price}). The version we'll load is a cleaned up version of the original data set and treats all categorical variables as nominal (see \code{?AmesHousing::make\_ames} for details).
 

@@ -174,7 +174,7 @@ Brandon, Alex, Brad   & \$5         & \$15         & \$10         \\
 Brandon, Brad, Alex   & \$17        & \$3          & \$10         \\ \midrule
 Shapley contribution: & \$9.50      & \$14.67      & \$5.83       \\ \bottomrule
 \end{tabular}
-\caption{Marginal contribution for each permutation of the players {Alex, Brad, Brandon} (i.e., the order in which they arrive). The Shapley contribution is the average marginal contribution across all permutations. (Notice how each row sums to the total bill of \$30.) \label{tab:bar}}
+\caption{Marginal contribution for each permutation of the players \{Alex, Brad, Brandon\} (i.e., the order in which they arrive). The Shapley contribution is the average marginal contribution across all permutations. (Notice how each row sums to the total bill of \$30.) \label{tab:bar}}
 \end{table}
 
 \subsection{Shapley values for explaining predictions}
@@ -723,6 +723,9 @@ Fortunately, Algorithm \ref{alg:SampleSHAP} can be trivially
 parallelized across features, and this is built into \pkg{fastshap}.
 
 \subsubsection{Example: Ames housing data}
+
+\textbf{FIXME:} Rerun with \texttt{exact\ =\ TRUE} and show how total
+across each is equal to the difference between prediction and baseline.
 
 For illustration, we'll use the Ames housing data \citep{ames-cock-2011}
 which are available in the \CRANpkg{AmesHousing} package

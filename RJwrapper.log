@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  5 MAR 2021 15:28
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  5 MAR 2021 15:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1472,23 +1472,30 @@ reme-explain-plot-1.pdf used on input line 660.
 Package natbib Warning: Citation `R-sparklyr' on page 8 undefined on input line
  679.
 
-[8] [9 <./greenwell_files/figure-latex/ex-credit-gbm-predict-extreme-explain-pl
-ot-1.pdf>] [10]
-<greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1.pdf, id=336, 410.5337
+[8]
+Overfull \hbox (0.35033pt too wide) in paragraph at lines 730--739
+[]\T1/ppl/m/n/9 (-20) For il-lus-tra-tion, we'll use the Ames hous-ing data ([]
+[][]Cock[][], [][]2011[][]) which are avail-able in the [][]\T1/ppl/b/n/9 AmesH
+ous-
+ []
+
+[9 <./greenwell_files/figure-latex/ex-credit-gbm-predict-extreme-explain-plot-1
+.pdf>] [10]
+<greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1.pdf, id=337, 410.5337
 5pt x 258.9675pt>
 File: greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1.pdf Graphic file
  (type pdf)
 <use greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1.pdf>
 Package pdftex.def Info: greenwell_files/figure-latex/ex-ames-fastshap-autoplot
--1.pdf used on input line 896.
+-1.pdf used on input line 899.
 (pdftex.def)             Requested size: 398.33858pt x 251.27322pt.
 
-Package natbib Warning: Citation `R-pdp' on page 11 undefined on input line 917
+Package natbib Warning: Citation `R-pdp' on page 11 undefined on input line 920
 .
 
 [11]
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 8.16003pt on input line 975.
+(Font)              scaled to size 8.16003pt on input line 978.
 Package microtype Info: Character `textendash ' is missing
 (microtype)             in font `T1/zi4/m/n/8'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1497,7 +1504,7 @@ Package microtype Info: Character `textemdash ' is missing
 (microtype)             Ignoring protrusion settings for this character.
 
 LaTeX Warning: Reference `sec:KernelSHAP' on page 12 undefined on input line 97
-6.
+9.
 
 [12 <./greenwell_files/figure-latex/ex-ames-fastshap-autoplot-1.pdf>]
 Package microtype Info: Loading generic settings for font family
@@ -1505,31 +1512,31 @@ Package microtype Info: Loading generic settings for font family
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 
-<greenwell_files/figure-latex/ex-boston-mars-SampleSHAP-1.pdf, id=379, 400.4962
+<greenwell_files/figure-latex/ex-boston-mars-SampleSHAP-1.pdf, id=380, 400.4962
 5pt x 191.71625pt>
 File: greenwell_files/figure-latex/ex-boston-mars-SampleSHAP-1.pdf Graphic file
  (type pdf)
 <use greenwell_files/figure-latex/ex-boston-mars-SampleSHAP-1.pdf>
 Package pdftex.def Info: greenwell_files/figure-latex/ex-boston-mars-SampleSHAP
--1.pdf used on input line 1069.
+-1.pdf used on input line 1072.
 (pdftex.def)             Requested size: 398.33858pt x 190.69482pt.
 [13] [14 <./greenwell_files/figure-latex/ex-boston-mars-SampleSHAP-1.pdf>]
-<greenwell_files/figure-latex/titanic-jack-explanations-plot-1.pdf, id=411, 623
+<greenwell_files/figure-latex/titanic-jack-explanations-plot-1.pdf, id=413, 623
 .32875pt x 393.47pt>
 File: greenwell_files/figure-latex/titanic-jack-explanations-plot-1.pdf Graphic
  file (type pdf)
 <use greenwell_files/figure-latex/titanic-jack-explanations-plot-1.pdf>
 Package pdftex.def Info: greenwell_files/figure-latex/titanic-jack-explanations
--plot-1.pdf used on input line 1210.
+-plot-1.pdf used on input line 1213.
 (pdftex.def)             Requested size: 398.33858pt x 251.4477pt.
 [15]
-<greenwell_files/figure-latex/titanic-benchmark-1.pdf, id=418, 404.51125pt x 19
+<greenwell_files/figure-latex/titanic-benchmark-1.pdf, id=419, 404.51125pt x 19
 4.7275pt>
 File: greenwell_files/figure-latex/titanic-benchmark-1.pdf Graphic file (type p
 df)
 <use greenwell_files/figure-latex/titanic-benchmark-1.pdf>
 Package pdftex.def Info: greenwell_files/figure-latex/titanic-benchmark-1.pdf u
-sed on input line 1268.
+sed on input line 1271.
 (pdftex.def)             Requested size: 398.33858pt x 191.75867pt.
 [16 <./greenwell_files/figure-latex/titanic-jack-explanations-plot-1.pdf>] (./R
 Jwrapper.bbl (./RJwrapper.brf)
@@ -1539,15 +1546,15 @@ Jwrapper.bbl (./RJwrapper.brf)
 [17 <./greenwell_files/figure-latex/titanic-benchmark-1.pdf>] [18])
 
 LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
-(Font)              using `T1/zi4/m/n' instead on input line 1339.
+(Font)              using `T1/zi4/m/n' instead on input line 1342.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1339--1340
+Underfull \hbox (badness 10000) in paragraph at lines 1342--1343
 
  []
 
 LaTeX Font Info:    Font shape `T1/zi4/m/it' will be
-(Font)              scaled to size 9.18004pt on input line 1350.
+(Font)              scaled to size 9.18004pt on input line 1353.
 Package microtype Info: Character `textendash ' is missing
 (microtype)             in font `T1/zi4/m/it/9'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1555,7 +1562,7 @@ Package microtype Info: Character `textemdash ' is missing
 (microtype)             in font `T1/zi4/m/it/9'.
 (microtype)             Ignoring protrusion settings for this character.
 )
-Underfull \hbox (badness 10000) in paragraph at lines 1350--32
+Underfull \hbox (badness 10000) in paragraph at lines 1353--32
 
  []
 
@@ -1587,7 +1594,7 @@ Here is how much of TeX's memory you used:
  25598 multiletter control sequences out of 15000+600000
  86192 words of font info for 333 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 62i,17n,94p,706b,727s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 62i,17n,94p,706b,723s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): name{Hfootnote.5} has been referenced but does not exi
 st, replaced by a fixed one
 
@@ -1622,10 +1629,10 @@ type1/urw/palatino/uplbi8a.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/
 urw/palatino/uplr8a.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/urw/pal
 atino/uplr8a.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/urw/palatino/u
 plri8a.pfb>
-Output written on RJwrapper.pdf (19 pages, 522437 bytes).
+Output written on RJwrapper.pdf (19 pages, 522780 bytes).
 PDF statistics:
- 622 PDF objects out of 1000 (max. 8388607)
- 561 compressed objects within 6 object streams
+ 623 PDF objects out of 1000 (max. 8388607)
+ 562 compressed objects within 6 object streams
  100 named destinations out of 1000 (max. 500000)
  60059 words of extra memory for PDF output out of 61914 (max. 10000000)
 
