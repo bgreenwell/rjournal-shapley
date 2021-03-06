@@ -30,6 +30,7 @@ pkgs <- c(
   "plyr",
   "ranger",
   "Rcpp",
+  "shapr",
   "tibble",
   "titanic",
   "xgboost"

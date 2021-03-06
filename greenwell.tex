@@ -19,40 +19,33 @@ to contribute!
 \subsubsection{TODO:}\label{todo}}
 
 \begin{itemize}
-\tightlist
-\item
-  \sout{Flesh out outline/section headers.}
-\item
-  \sout{Finish bar tab example (or switch to something better).}
-\item
-  Discuss SHAP as a unification of Shapley, LIME, etc.
-\item
-  Find a good place to talk about ``true to the model'' versus ``true to
-  the data'': \url{https://arxiv.org/pdf/2006.16234.pdf} (I think this
-  is important for motivating the SampleSHAP approximation, which relies
-  on randomly permuting instance values.) Some remarks on causality here
-  are probably also warranted.
-\item
-  Fill out KernelSHAP section.
-\item
-  \sout{Find motivating example for \textbf{iml} package; maybe credit
-  card default risk?}
-\item
-  \sout{Find motivating example for \textbf{fastshap} package; maybe
-  Ames housing?}
-\item
-  \sout{Find motivating example of interfacing with \textbf{shap} via
-  \textbf{reticulate}. Can probably lift from the \textbf{fastshap}
-  vignette here:
-  \url{https://bgreenwell.github.io/fastshap/articles/fastshap-vs-shap.html}.}
-\item
-  Discuss advantages and disadvantages described in
-  \url{https://christophm.github.io/interpretable-ml-book/shapley.html}.
-\item
-  Mention the technical difference between SHAP (which satisfies the
-  consistency property) and traditional Shapley values (like
-  SampleSHAP), and how we loosen the distinction of the terminology
-  here.
+
+  \item ~~Flesh out outline/section headers.~~
+  
+  \item ~~Finish bar tab example (or switch to something better).~~
+  
+  \item Discuss SHAP as a unification of Shapley, LIME, etc.
+  
+  \item Find a good place to talk about "true to the model" versus "true to the data": https://arxiv.org/pdf/2006.16234.pdf (I think this is important for motivating the SampleSHAP approximation, which relies on randomly permuting instance values.) Some remarks on causality here are probably also warranted.
+  
+  \item Fill out KernelSHAP section.
+  
+  \item ~~Find motivating example for **iml** package; maybe credit card default risk?~~
+  
+  \item ~~Find motivating example for **fastshap** package; maybe Ames housing?~~
+  
+  \item ~~Find motivating example of interfacing with **shap** via **reticulate**. Can probably lift from the **fastshap** vignette here: https://bgreenwell.github.io/fastshap/articles/fastshap-vs-shap.html.~~
+  
+  \item Discuss advantages and disadvantages described in \url{https://christophm.github.io/interpretable-ml-book/shapley.html}.
+  
+  \item Mention the technical difference between SHAP (which satisfies the consistency property) and traditional Shapley values (like SampleSHAP), and how we loosen the distinction of the terminology here.
+  
+  \item Describe where the baseline ($\phi_0$) comes from, perhaps when introducing SHAP in the KernelSHAP section? Should make it clear that SampleSHAP also explains the difference $\widehat{f}\left(x\right) - \bar{y}_{trn}$, as opposed to $\widehat{f}\left(x\right)$ (not clear from reading \citet{strumbelj-2014-explaining}, maybe Equation (5)?).
+  
+  \item Is it worth mentioning the normal approximation discussed in \citet{strumbelj-2014-explaining}? (I honestly haven't seen this used anywhere, but that doesn't mean it's not valuable. Approximate standard errors? Confidence intervals? Need $\sigma_i ^ 2$.)
+  
+  \item Fix notation. $S$ is being used to represent the set of all players/features and subsets in some cases. Perhaps use $T \subseteq S$.
+
 \end{itemize}
 
 \section{Background}
@@ -139,7 +132,7 @@ information, perhaps based on historical data:
   
   \item If Brad and Brandon drank together, they'd only pay \$13.
   
-  \item If Ales, Brad, and Brandon drank together, they'd only pay \$30.
+  \item If Alex, Brad, and Brandon drank together, they'd only pay \$30.
 
 \end{itemize}
 
@@ -159,6 +152,10 @@ last row). In this case, Brandon would get away with the smallest payout
 (i.e., have to pay the smallest portion of the total tab). The next time
 the bartender asks how you want to split the tab, whip out a pencil and
 do the math!
+
+\textbf{FIXME:} Connect some of the values in this example with Equation
+\ref{eqn:shapley-value} (e.g., show what
+\(v\left(S^\mathcal{O} \cup i\right)\) is in this example).
 
 \begin{table}[!htb]
 \centering
@@ -338,16 +335,66 @@ models, provided you specify \code{type = "terms"}; see
 \code{?predict.lm} for details and Section \ref{sec:benchmark} for an
 example with a logistic regression model.
 
+\subsection{KernelSHAP: Approximate Shapley values using kernel approximations}
+
+\textbf{NOTES:}
+
+Discuss SHAP (Shapley Additive Explanations).
+
+The KernelSHAP supposedly requires less computational power than
+SampleSHAP to obtain a similar approximation accuracy (i.e., fewer
+replications).
+
+KernelSHAP, or at least it's implementation in \pkg{shap}, distributes
+the number of replications unevenly across the different features.
+Apparently, features with higher variance are attributed more
+replications.
+
+Like SampleSHAP and LinearSHAP, KernelSHAP assumes independent features.
+
+Extended to handle dependent features in \citet{aas-2020-explaining} and
+is available in the R package \CRANpkg{shapr} \citep{R-shapr}.
+
+KernelSHAP \citep{lundberg-2017-KernelSHAP} uses a specially-weighted
+local linear regression to estimate SHAP values for any model. Unlike
+SampleSHAP\ldots{}
+
+SHAP decomposes a prediction into \begin{equation}
+\label{eqn:shap}
+  f\left(x\right) = \phi_0 + \sum_{i = 1} ^ p \phi_i,
+\end{equation} where \(f\left(x\right)\),
+\(\phi_0 = \mathbb{E}\left[f\left(x\right)\right]\), \(p\) is the number
+of predictors, and \(\phi_i\) is the contribution of the \(i\)-th
+feature. It should be noted that \(\phi_i\) (\(i = 1, 2, \dots, p\))
+depend on the observation \(x\), whereas \(\phi_0\) is constant. From
+Equation \eqref{eqn:shap}, it should be clear that
+\(\sum_{i = 1}^p \phi_i = f\left(x\right) - \phi_0\). In other words,
+SHAP values help to explain the difference between a particular
+prediction and the global average prediction. The quantity \(\phi_0\) is
+often referred to as the baseline prediction and is estimated in
+practice using the average prediction across all \(N\) training
+observations: \(\bar{y}_{trn} = \sum_{i = 1}^N y_i / N\)
+
+Several equivalent formulas for the Shapley value (Equation
+\eqref{eqn:shapley-value}). Both
+\citet{lundberg-2017-KernelSHAP}\ldots{}
+
+Discuss Shapley values as the solution to a weighted least squares
+problem; see \citet{charnes-1988-extremal} for details.
+
 \subsection{TreeSHAP: Efficient Shapley values for tree ensembles}
 
 \textbf{FIXME:} Need to find the right balance of details and complexity
 here.
 
-\subsection{KernelSHAP: Approximate Shapley values using kernel approximations}
+\textbf{NOTES:}
 
-KernelSHAP \citep{lundberg-2017-KernelSHAP} uses a specially-weighted
-local linear regression to estimate SHAP values for any model. Unlike
-SampleSHAP\ldots{}
+TreeSHAP assumes ``less'' feature independence in the sense that it
+accounts for some of the dependence, but not all
+\citep{aas-2020-explaining}.
+
+Only applicable to tree-based models, and implemented for only a few
+algorithms (e.g., XGBoost and LightGBM).
 
 \section{Shapley values is R (and other open source software)}
 
@@ -373,6 +420,8 @@ library using \CRANpkg{reticulate} \citep{R-reticulate}; however, it
 currently only supports KernelSHAP (\pkg{shap} itself supports
 SampleSHAP, TreeSHAP, LinearSHAP, as well as various other
 model-specific Shapley explanation methods).
+
+\textbf{FIXME:} \pkg{shapr} is now on CRAN!
 
 We're also aware of two experimental packages supporting Shapley
 explanations that are not currently on CRAN: \pkg{shapr}
