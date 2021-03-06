@@ -89,7 +89,7 @@ The above properties can be interpreted as follows: 1) the individual player con
 \label{eqn:shapley-value}
 \phi_i\left(x\right) = \frac{1}{p!} \sum_{\mathcal{O} \in \pi\left(p\right)} \left[v\left(S^\mathcal{O} \cup i\right) - v\left(S^\mathcal{O}\right)\right], \quad i = 1, 2, \dots, p,
 \end{equation}
-where $\mathcal{O}$ is a specific permutation of the players indices $\left\{1, 2, \dots, p\right\}$, $\pi\left(p\right)$ is the set of all suck permutations of size $p$, and $S^\mathcal{O}$ is the set of players joining the coalition before player $i$.
+where $\mathcal{O}$ is a specific permutation of the players indices $\left\{1, 2, \dots, p\right\}$, $\pi\left(p\right)$ is the set of all such permutations of size $p$, and $S^\mathcal{O}$ is the set of players joining the coalition before player $i$.
 
 In other words, the Shapley value is the average marginal contribution of a player across all possible coalitions in a game. Another way to interpret Equation \eqref{eqn:shapley-value} is as follows. Imagine the coalitions (subsets of players) being formed one player at a time (which can happen in different orders), with the $i$-th player demanding a fair contribution/payout of $v\left(S^\mathcal{O} \cup i\right) - v\left(S^\mathcal{O}\right)$. The Shapley value for player $i$ is given by the average of this contribution over all possible permutations in which the coalition can be formed.
 
