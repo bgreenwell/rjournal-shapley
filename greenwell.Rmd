@@ -264,7 +264,8 @@ Note that if you're using R, then $\beta_i \left(X_i - \E\left(X_i\right)\right)
 \subsection{KernelSHAP: Approximate Shapley values using kernel approximations}
 <!-- ----------------------------------------------------------------------- -->
 
-###NOTES:
+**NOTES:**
+
 (Christoph, this was my initial "thought dump", feel free to delete or use.)
 \begin{itemize}
 
