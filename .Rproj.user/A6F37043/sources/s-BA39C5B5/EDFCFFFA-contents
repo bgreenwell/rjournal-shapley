@@ -312,6 +312,8 @@ Only applicable to tree-based models, and implemented for only a few algorithms 
 \section{Shapley values is R (and other open source software)}
 <!-- ----------------------------------------------------------------------- -->
 
+**TODO:** Use \pkg{pkgsearch} to do a more exhaustive check. Also, reference the landscape paper: https://arxiv.org/pdf/2009.13248.pdf.
+
 Probably the first, and most widely used implementation of Shapley explanations is the Python \pkg{shap} library \citep{lundberg-2017-KernelSHAP}, which provides a Python implementation of SampleSHAP, KernelSHAP, TreeSHAP, and a few other model-specific Shapley methods (e.g., DeepSHAP, which is provides approximate Shapley values for deep learning models).
 
 The \CRANpkg{iml} package \citep{R-iml} provides the \code{Shapley()} function, which is a direct implementation of Algorithm \ref{alg:SampleSHAP}. It is written in \CRANpkg{R6} \citep{R-R6}.
@@ -337,7 +339,7 @@ The next two sections illustrate more in-depth use of the \pkg{iml} and \pkg{fas
 \subsection{The \pkg{iml} package}
 <!-- ----------------------------------------------------------------------- -->
 
-The \pkg{iml} package includes a consistent interface to several machine learning interpretability, including: variable importance plots, as described in \citet{fisher-2019-models}, accumulated local effects (ALE) plots \citep{apley-2019-ale}; partial dependence plots \citep{friedman-2001-greedy}, individual conditional expectation (ICE) curves \citep{goldstein-peeking-2015}, the SampleSHAP algorithm described in \citet{strumbelj-2014-explaining} and discussed in Section \ref{sec:SampleSHAP}, the $H$-statistic for quantifying the strength of interaction effects \citep{friedman-2008-predictive}, tree-based surrogate models (see, for example, \citet[Chap. 5]{molnar-2019-iml}), and others..
+The \pkg{iml} package includes a consistent interface to several machine learning interpretability methods, including: variable importance plots, as described in \citet{fisher-2019-models}, accumulated local effects (ALE) plots \citep{apley-2019-ale}; partial dependence plots \citep{friedman-2001-greedy}, individual conditional expectation (ICE) curves \citep{goldstein-peeking-2015}, the SampleSHAP algorithm described in \citet{strumbelj-2014-explaining} and discussed in Section \ref{sec:SampleSHAP}, the $H$-statistic for quantifying the strength of interaction effects \citep{friedman-2008-predictive}, tree-based surrogate models (see, for example, \citet[Chap. 5]{molnar-2019-iml}), and others.
 
 The \code{iml::Shapley()} function implements the SampleSHAP approximation described in Section \ref{sec:SampleSHAP}.
 
